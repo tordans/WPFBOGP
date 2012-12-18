@@ -26,7 +26,8 @@ License: GPL2
 */
 /* LIST UPDATES WHILE IN BETA
 - change media link in admin to media-new.php from base media library list
--
+- change sort so default image shows up first when other images set
+- contingency for if default checkbox is set but no default image is set
 */
 
 define('WPFBOGP_VERSION', '2.0.8b');
@@ -160,23 +161,20 @@ function wpfbogp_build_head() {
 				$thumbnail_src = wp_get_attachment_image_src( get_post_thumbnail_id( $post->ID ), 'medium' );
 				$wpfbogp_images[] = $thumbnail_src[0]; // Add to images array
 			}
-
-			if ( wpfbogp_find_images() !== false && is_singular() ) { // Use our function to find post/page images
-				$wpfbogp_images = array_merge( $wpfbogp_images, wpfbogp_find_images() ); // Returns an array already, so merge into existing
+			// Find any images in post/page content and put into current array
+			if ( wpfbogp_find_images() !== false && is_singular() ) {
+				$wpfbogp_images = array_merge( $wpfbogp_images, wpfbogp_find_images() );
 			}
 		}
-
-		// Add the fallback image to the images array (which is empty if it's being forced)
 		if ( isset( $options['wpfbogp_fallback_img'] ) && $options['wpfbogp_fallback_img'] != '') {
-			$wpfbogp_images[] = $options['wpfbogp_fallback_img']; // Add to images array
+			echo '<meta property="og:image" content="' . esc_url( apply_filters( 'wpfbogp_image', $options['wpfbogp_fallback_img'] ) ) . '"/>' . "\n";
 		}
-
 		// Make sure there were images passed as an array and loop through/output each
 		if ( ! empty( $wpfbogp_images ) && is_array( $wpfbogp_images ) ) {
 			foreach ( $wpfbogp_images as $image ) {
 				echo '<meta property="og:image" content="' . esc_url( apply_filters( 'wpfbogp_image', $image ) ) . '"/>' . "\n";
 			}
-		} else {
+		} elseif ( $options['wpfbogp_force_fallback'] != 1 || isset( $options['wpfbogp_fallback_img'] ) && $options['wpfbogp_fallback_img'] == '' ) {
 			// No images were outputted because they have no default image (at the very least)
 			echo "<!-- There is not an image here as you haven't set a default image in the plugin settings! -->\n";
 		}
