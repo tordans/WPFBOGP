@@ -28,6 +28,7 @@ License: GPL2
 - change media link in admin to media-new.php from base media library list
 - change sort so default image shows up first when other images set
 - contingency for if default checkbox is set but no default image is set
+- attempt to fix allinoneseo description issue in filtering trailing slashes
 */
 
 define('WPFBOGP_VERSION', '2.0.8b');
@@ -77,11 +78,11 @@ function wpfbogp_callback( $content ) {
 
 	// Take page title and meta description and place it in the ogp meta tags
 	if ( $title !== FALSE && count( $title_matches ) == 2 ) {
-		$content = preg_replace( '/<meta property="og:title" content="(.*)">/', '<meta property="og:title" content="' . $title_matches[1] . '">', $content );
+		$content = preg_replace( '/<meta property="og:title" content="(.*)"\/>/', '<meta property="og:title" content="' . $title_matches[1] . '"\/>', $content );
 	}
 
 	if ( $description !== FALSE && count( $description_matches ) == 2 ) {
-		$content = preg_replace( '/<meta property="og:description" content="(.*)">/', '<meta property="og:description" content="' . $description_matches[1] . '">', $content );
+		$content = preg_replace( '/<meta property="og:description" content="(.*)"\/>/', '<meta property="og:description" content="' . $description_matches[1] . '"\/>', $content );
 	}
 
 	return $content;
