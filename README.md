@@ -14,7 +14,7 @@
 * English
 * German
 
-Help to translate at [https://translate.foe-services.de/projects/google-analytics-mu](https://translate.foe-services.de/projects/google-analytics-mu)
+Help to translate at [https://translate.foe-services.de/projects/wpfbogp](https://translate.foe-services.de/projects/wpfbogp)
 
 ### License
 License: [GPLv2 or later](http://www.gnu.org/licenses/gpl-2.0.html)

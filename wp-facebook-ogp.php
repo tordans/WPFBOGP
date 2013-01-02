@@ -209,16 +209,16 @@ function wpfbogp_buildpage() {
 ?>
 
 <div class="wrap">
-	<h2><?php sprintf(_x('Facebook Open Graph protocol plugin %s', 'Headline + Version', 'wpfbogp'), '<em>v' . WPFBOGP_VERSION . '</em>') ?></h2>
+	<h2><?php printf(_x('Facebook Open Graph protocol plugin %s', 'Headline + Version', 'wpfbogp'), '<em>v' . WPFBOGP_VERSION . '</em>') ?></h2>
 	<div id="poststuff" class="metabox-holder has-right-sidebar">
 		<div id="side-info-column" class="inner-sidebar">
 			<div class="meta-box-sortables">
 				<div id="about" class="postbox">
 					<h3 class="hndle" id="about-sidebar"><?php _e('About the Plugin:', 'wpfbogp') ?></h3>
 					<div class="inside">
-						<p><?php sprintf(__('Talk to %s on twitter or please fill out the %s for bugs or feature requests.', 'wpfbogp'), '<a href="http://twitter.com/chuckreynolds" target="_blank">@ChuckReynolds</a>', '<a href="http://rynoweb.com/wordpress-plugins/" target="_blank">' . __('plugin support form', 'wpfbogp') . '</a>') ?></p>
+						<p><?php printf(__('Talk to %s on twitter or please fill out the %s for bugs or feature requests.', 'wpfbogp'), '<a href="http://twitter.com/chuckreynolds" target="_blank">@ChuckReynolds</a>', '<a href="http://rynoweb.com/wordpress-plugins/" target="_blank">' . __('plugin support form', 'wpfbogp') . '</a>') ?></p>
 						<p><strong><?php _e('Enjoy the plugin?', 'wpfbogp') ?></strong><br />
-						<?php sprintf(__('%s and consider donating.', 'wpfbogp'), '<a href="http://twitter.com/?status=I\'m using @chuckreynolds\'s WordPress Facebook Open Graph plugin - check it out! http://rynoweb.com/wordpress-plugins/" target="_blank">' . __('Tweet about it', 'wpfbogp') . '</a>') ?></p>
+						<?php printf(__('%s and consider donating.', 'wpfbogp'), '<a href="http://twitter.com/?status=I\'m using @chuckreynolds\'s WordPress Facebook Open Graph plugin - check it out! http://rynoweb.com/wordpress-plugins/" target="_blank">' . __('Tweet about it', 'wpfbogp') . '</a>') ?></p>
 						<p><?php _e('<strong>Donate:</strong> A lot of hard work goes into building plugins - support your open source developers. Include your twitter username and I\'ll send you a shout out for your generosity. Thank you!', 'wpfbogp') ?><br />
 						<form action="https://www.paypal.com/cgi-bin/webscr" method="post">
 						<input type="hidden" name="cmd" value="_s-xclick">
@@ -264,13 +264,13 @@ function wpfbogp_buildpage() {
 			<tr valign="top">
 				<th scope="row"><?php _e('Facebook Application ID:', 'wpfbogp') ?></th>
 				<td><input type="text" name="wpfbogp[wpfbogp_app_id]" value="<?php echo $options['wpfbogp_app_id']; ?>" class="regular-text" /><br />
-					<?php sprintf(__('For business and/or brand sites use Insights on an App ID as to not associate it with a particular person. You can use this with or without the User ID field. Create an app and use the "App ID": %s.', 'wpfbogp'), '<a href="https://www.facebook.com/developers/apps.php" target="_blank">' . __('Create FB App', 'wpfbogp') . '</a>') ?></td>
+					<?php printf(__('For business and/or brand sites use Insights on an App ID as to not associate it with a particular person. You can use this with or without the User ID field. Create an app and use the "App ID": %s.', 'wpfbogp'), '<a href="https://www.facebook.com/developers/apps.php" target="_blank">' . __('Create FB App', 'wpfbogp') . '</a>') ?></td>
 			</tr>
 			<tr valign="top">
 				<th scope="row"><?php _e('Default Image URL to use:', 'wpfbogp') ?></th>
 				<td><input type="text" name="wpfbogp[wpfbogp_fallback_img]" value="<?php echo $options['wpfbogp_fallback_img']; ?>" class="large-text" /><br />
 					<?php _e("Full URL including http:// to the default image to use if your posts/pages don't have a featured image or an image in the content. <strong>The image is recommended to be 200px by 200px</strong>.", 'wpfbogp') ?><br />
-					<?php sprintf(__('You can use the WordPress %s if you wish, just copy the location of the image and put it here.', 'wpfbogp'), '<a href="media-new.php">' . __('media uploader', 'wpfbogp') . '</a>') ?></td>
+					<?php printf(__('You can use the WordPress %s if you wish, just copy the location of the image and put it here.', 'wpfbogp'), '<a href="media-new.php">' . __('media uploader', 'wpfbogp') . '</a>') ?></td>
 			</tr>
 			<tr valign="top">
 				<th scope="row"><?php _e('Force Fallback Image as Default', 'wpfbogp') ?></th>
