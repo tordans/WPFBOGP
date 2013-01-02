@@ -1,12 +1,15 @@
 <?php
 /*
-Plugin Name: WP Facebook Open Graph protocol
-Plugin URI: http://wordpress.org/extend/plugins/wp-facebook-open-graph-protocol/
-Description: Adds proper Facebook Open Graph Meta tags and values to your site so when links are shared it looks awesome! Works on Google + and Linkedin too!
-Version: 2.0.8b
-Author: Chuck Reynolds
-Author URI: http://chuckreynolds.us
-License: GPL2
+Plugin Name:    WP Facebook Open Graph protocol
+Plugin URI:     http://wordpress.org/extend/plugins/wp-facebook-open-graph-protocol/
+Description:    Adds proper Facebook Open Graph Meta tags and values to your site so when links are shared it looks awesome! Works on Google + and Linkedin too!
+Version:        2.0.8b
+Author:         Chuck Reynolds
+Author URI:     http://chuckreynolds.us
+License:        GPLv2
+
+Text Domain:    wpfbogp
+Domain Path:    /languages/
 */
 /*
 	Copyright 2011 WordPress Facebook Open Graph protocol plugin (email: chuck@rynoweb.com)
@@ -202,20 +205,21 @@ function wpfbogp_add_page() {
 
 // build admin page
 function wpfbogp_buildpage() {
+    load_plugin_textdomain( 'wpfbogp', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
 ?>
 
 <div class="wrap">
-	<h2>Facebook Open Graph protocol plugin <em>v<?php echo WPFBOGP_VERSION; ?></em></h2>
+	<h2><?php sprintf(_x('Facebook Open Graph protocol plugin %s', 'Headline + Version', 'wpfbogp'), '<em>v' . WPFBOGP_VERSION . '</em>') ?></h2>
 	<div id="poststuff" class="metabox-holder has-right-sidebar">
 		<div id="side-info-column" class="inner-sidebar">
 			<div class="meta-box-sortables">
 				<div id="about" class="postbox">
-					<h3 class="hndle" id="about-sidebar"><?php _e('About the Plugin:') ?></h3>
+					<h3 class="hndle" id="about-sidebar"><?php _e('About the Plugin:', 'wpfbogp') ?></h3>
 					<div class="inside">
-						<p>Talk to <a href="http://twitter.com/chuckreynolds" target="_blank">@ChuckReynolds</a> on twitter or please fill out the <a href="http://rynoweb.com/wordpress-plugins/" target="_blank">plugin support form</a> for bugs or feature requests.</p>
-						<p><?php _e('<strong>Enjoy the plugin?</strong>') ?><br />
-						<a href="http://twitter.com/?status=I'm using @chuckreynolds's WordPress Facebook Open Graph plugin - check it out! http://rynoweb.com/wordpress-plugins/" target="_blank"><?php _e('Tweet about it') ?></a> <?php _e('and consider donating.') ?></p>
-						<p><?php _e('<strong>Donate:</strong> A lot of hard work goes into building plugins - support your open source developers. Include your twitter username and I\'ll send you a shout out for your generosity. Thank you!') ?><br />
+						<p><?php sprintf(__('Talk to %s on twitter or please fill out the %s for bugs or feature requests.', 'wpfbogp'), '<a href="http://twitter.com/chuckreynolds" target="_blank">@ChuckReynolds</a>', '<a href="http://rynoweb.com/wordpress-plugins/" target="_blank">' . __('plugin support form', 'wpfbogp') . '</a>') ?></p>
+						<p><strong><?php _e('Enjoy the plugin?', 'wpfbogp') ?></strong><br />
+						<?php sprintf(__('%s and consider donating.', 'wpfbogp'), '<a href="http://twitter.com/?status=I\'m using @chuckreynolds\'s WordPress Facebook Open Graph plugin - check it out! http://rynoweb.com/wordpress-plugins/" target="_blank">' . __('Tweet about it', 'wpfbogp') . '</a>') ?></p>
+						<p><?php _e('<strong>Donate:</strong> A lot of hard work goes into building plugins - support your open source developers. Include your twitter username and I\'ll send you a shout out for your generosity. Thank you!', 'wpfbogp') ?><br />
 						<form action="https://www.paypal.com/cgi-bin/webscr" method="post">
 						<input type="hidden" name="cmd" value="_s-xclick">
 						<input type="hidden" name="hosted_button_id" value="GWGGBTBJTJMPW">
@@ -228,7 +232,7 @@ function wpfbogp_buildpage() {
 
 			<div class="meta-box-sortables">
 				<div id="about" class="postbox">
-					<h3 class="hndle" id="about-sidebar"><?php _e('Relevant Information:') ?></h3>
+					<h3 class="hndle" id="about-sidebar"><?php _e('Relevant Information:', 'wpfbogp') ?></h3>
 					<div class="inside">
 						<p><a href="http://ogp.me" target="_blank">The Open Graph Protocol</a><br />
 						<a href="https://developers.facebook.com/docs/opengraph/" target="_blank">Facebook Open Graph Docs</a><br />
@@ -252,25 +256,25 @@ function wpfbogp_buildpage() {
 
 		<table class="form-table">
 			<tr valign="top">
-				<th scope="row"><?php _e('Facebook User Account ID:') ?></th>
+				<th scope="row"><?php _e('Facebook User Account ID:', 'wpfbogp') ?></th>
 				<td><input type="text" name="wpfbogp[wpfbogp_admin_ids]" value="<?php echo $options['wpfbogp_admin_ids']; ?>" class="regular-text" /><br />
-					<?php _e('For personal sites use your Facebook User ID here. <em>(You can enter multiple by separating each with a comma)</em>, if you want to receive Insights about the Like Buttons. The meta values will not display in your site until you\'ve completed this box.<br />
-					<strong>Find your ID</strong> by going to the URL like this: http://graph.facebook.com/yourusername') ?></td>
+					<?php _e("For personal sites use your Facebook User ID here. <em>(You can enter multiple by separating each with a comma)</em>, if you want to receive Insights about the Like Buttons. The meta values will not display in your site until you've completed this box.", 'wpfbogp') ?><br />
+					<?php _e('<strong>Find your ID</strong> by going to the URL like this:', 'wpfbogp') ?> http://graph.facebook.com/yourusername</td>
 			</tr>
 			<tr valign="top">
-				<th scope="row"><?php _e('Facebook Application ID:') ?></th>
+				<th scope="row"><?php _e('Facebook Application ID:', 'wpfbogp') ?></th>
 				<td><input type="text" name="wpfbogp[wpfbogp_app_id]" value="<?php echo $options['wpfbogp_app_id']; ?>" class="regular-text" /><br />
-					<?php _e('For business and/or brand sites use Insights on an App ID as to not associate it with a particular person. You can use this with or without the User ID field. Create an app and use the "App ID": <a href="https://www.facebook.com/developers/apps.php" target="_blank">Create FB App</a>.') ?></td>
+					<?php sprintf(__('For business and/or brand sites use Insights on an App ID as to not associate it with a particular person. You can use this with or without the User ID field. Create an app and use the "App ID": %s.', 'wpfbogp'), '<a href="https://www.facebook.com/developers/apps.php" target="_blank">' . __('Create FB App', 'wpfbogp') . '</a>') ?></td>
 			</tr>
 			<tr valign="top">
-				<th scope="row"><?php _e('Default Image URL to use:') ?></th>
+				<th scope="row"><?php _e('Default Image URL to use:', 'wpfbogp') ?></th>
 				<td><input type="text" name="wpfbogp[wpfbogp_fallback_img]" value="<?php echo $options['wpfbogp_fallback_img']; ?>" class="large-text" /><br />
-					<?php _e('Full URL including http:// to the default image to use if your posts/pages don\'t have a featured image or an image in the content. <strong>The image is recommended to be 200px by 200px</strong>.<br />
-					You can use the WordPress <a href="media-new.php">media uploader</a> if you wish, just copy the location of the image and put it here.') ?></td>
+					<?php _e("Full URL including http:// to the default image to use if your posts/pages don't have a featured image or an image in the content. <strong>The image is recommended to be 200px by 200px</strong>.", 'wpfbogp') ?><br />
+					<?php sprintf(__('You can use the WordPress %s if you wish, just copy the location of the image and put it here.', 'wpfbogp'), '<a href="media-new.php">' . __('media uploader', 'wpfbogp') . '</a>') ?></td>
 			</tr>
 			<tr valign="top">
-				<th scope="row"><?php _e('Force Fallback Image as Default') ?></th>
-				<td><input type="checkbox" name="wpfbogp[wpfbogp_force_fallback]" value="1" <?php if ($options['wpfbogp_force_fallback'] == 1) echo 'checked="checked"'; ?>) /> <?php _e('Use this if you want to use the Default Image for everything instead of looking for featured/content images.') ?></label></td>
+				<th scope="row"><?php _e('Force Fallback Image as Default', 'wpfbogp') ?></th>
+				<td><input type="checkbox" name="wpfbogp[wpfbogp_force_fallback]" value="1" <?php if ($options['wpfbogp_force_fallback'] == 1) echo 'checked="checked"'; ?> /> <?php _e('Use this if you want to use the Default Image for everything instead of looking for featured/content images.', 'wpfbogp') ?></label></td>
 			</tr>
 		</table>
 
@@ -298,11 +302,12 @@ function wpfbogp_validate($input) {
 
 // run admin notices on activation or if settings not set
 function wpfbogp_admin_warnings() {
+        load_plugin_textdomain( 'wpfbogp', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
 	global $wpfbogp_admins;
 		$wpfbogp_data = get_option('wpfbogp');
 	if ((empty($wpfbogp_data['wpfbogp_admin_ids']) || $wpfbogp_data['wpfbogp_admin_ids'] == '') && (empty($wpfbogp_data['wpfbogp_app_id']) || $wpfbogp_data['wpfbogp_app_id'] == '')) {
 		function wpfbogp_warning() {
-			echo "<div id='wpfbogp-warning' class='updated fade'><p><strong>".__('WP FB OGP is almost ready.')."</strong> ".sprintf(__('You must <a href="%1$s">enter your Facebook User ID or App ID</a> for it to work.'), "options-general.php?page=wpfbogp")."</p></div>";
+			echo "<div id='wpfbogp-warning' class='updated fade'><p><strong>" . __('WP FB OGP is almost ready.', 'wpfbogp') . "</strong> " . sprintf(__('You must %s for it to work.', 'wpfbogp'), '<a href="options-general.php?page=wpfbogp">' . __('enter your Facebook User ID or App ID', 'wpfbogp') . '</a>') . "</p></div>";
 		}
 	add_action('admin_notices', 'wpfbogp_warning');
 	}
@@ -320,7 +325,7 @@ function wpfbogp_add_settings_link($links, $file) {
 	static $this_plugin;
 	if (!$this_plugin) $this_plugin = plugin_basename(__FILE__);
 	if ($file == $this_plugin){
-		$settings_link = '<a href="options-general.php?page=wpfbogp">'.__("Settings","wpfbogp").'</a>';
+		$settings_link = '<a href="options-general.php?page=wpfbogp">'. __('Settings', 'wpfbogp') . '</a>';
 		array_unshift($links, $settings_link);
 	}
 	return $links;
