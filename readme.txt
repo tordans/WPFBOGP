@@ -29,6 +29,10 @@ Once you've enabled the plugin head over to Facebook's testing tool and paste in
 = Plugin Roadmap =
 If you have feature requests or bugs? Use the support links on <a href="http://rynoweb.com/wordpress-plugins/" title="rynoweb wordpress plugins">rYnoweb.com/WordPress-Plugins</a> and get in touch.
 
+= Development =
+* Contribute Code at [https://github.com/chuckreynolds/WPFBOGP](https://github.com/chuckreynolds/WPFBOGP)
+* Contribute Translations at [https://translate.foe-services.de/projects/wpfbogp](https://translate.foe-services.de/projects/wpfbogp)
+
 == Installation ==
 
 1. Upload the `wp-facebook-ogp` folder to the `/wp-content/plugins/` directory
@@ -38,7 +42,7 @@ If you have feature requests or bugs? Use the support links on <a href="http://r
 == Frequently Asked Questions ==
 
 = Do I need to create a Facebook Application to use this plugin? =
-No. Either your Facebook User ID or or an Application ID is a requirement. You're not required to register an app, instead just use your User ID (plugin admin settings page helps you find that). You can use both an App ID and User ID if you'd like. More details on how Facebook verifies admins is located here: https://developers.facebook.com/docs/insights/
+No. Either your Facebook User ID or an Application ID is a requirement. You're not required to register an app, instead just use your User ID (plugin admin settings page helps you find that). You can use both an App ID and User ID if you'd like. More details on how Facebook verifies admins is located here: https://developers.facebook.com/docs/insights/
 
 = Why doesn't this plugin have a Like/Send button? =
 Honestly it's not hard to add one once you have the proper meta content in the header. Look at <a href="https://developers.facebook.com/docs/reference/plugins/like/">how to add a Like button</a> using fb:like. There are a lot of 'like' button plugins but this one focuses on solid and accurate Open Graph meta data. 
@@ -48,6 +52,9 @@ Honestly it's not hard to add one once you have the proper meta content in the h
 1. The Open Graph admin options panel has all options laid out in one easy place. The rest is all behind the scenes.
 
 == Upgrade Notice ==
+= 2.0.8 =
+translation support, German translation
+
 = 2.0.7 =
 fixes bug with certain plugins not showing description tags properly
 
