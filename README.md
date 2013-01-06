@@ -19,4 +19,4 @@ Help to translate at [https://translate.foe-services.de/projects/wpfbogp](https:
 ### License
 License: [GPLv2 or later](http://www.gnu.org/licenses/gpl-2.0.html)
 
-### Contributations are always welcome
+### Contributions are always welcome
