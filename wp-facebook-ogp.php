@@ -219,7 +219,7 @@ function wpfbogp_add_page() {
 
 // build admin page
 function wpfbogp_buildpage() {
-    load_plugin_textdomain( 'wpfbogp', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
+	load_plugin_textdomain( 'wpfbogp', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
 ?>
 
 <div class="wrap">
@@ -327,7 +327,7 @@ function wpfbogp_validate($input) {
 
 // run admin notices on activation or if settings not set
 function wpfbogp_admin_warnings() {
-        load_plugin_textdomain( 'wpfbogp', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
+	load_plugin_textdomain( 'wpfbogp', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
 	global $wpfbogp_admins;
 		$wpfbogp_data = get_option('wpfbogp');
 	if ((empty($wpfbogp_data['wpfbogp_admin_ids']) || $wpfbogp_data['wpfbogp_admin_ids'] == '') && (empty($wpfbogp_data['wpfbogp_app_id']) || $wpfbogp_data['wpfbogp_app_id'] == '')) {
@@ -359,7 +359,7 @@ add_filter('plugin_action_links','wpfbogp_add_settings_link', 10, 2 );
 
 // lets offer an actual clean uninstall and rem db row on uninstall
 if (function_exists('register_uninstall_hook')) {
-    register_uninstall_hook(__FILE__, 'wpfbogp_uninstall_hook');
+	register_uninstall_hook(__FILE__, 'wpfbogp_uninstall_hook');
 	function wpfbogp_uninstall_hook() {
 		delete_option('wpfbogp');
 	}
