@@ -158,28 +158,42 @@ function wpfbogp_build_head() {
 		// Find/output any images for use in the OGP tags
 		$wpfbogp_images = array();
 
-		// Only find images if it isn't the homepage and the fallback isn't being forced
-		if ( ! is_home() && $options['wpfbogp_force_fallback'] != 1 ) {
-			// Find featured thumbnail of the current post/page
-			if ( function_exists( 'has_post_thumbnail' ) && has_post_thumbnail( $post->ID ) ) {
-				$thumbnail_src = wp_get_attachment_image_src( get_post_thumbnail_id( $post->ID ), 'medium' );
-				$wpfbogp_images[] = $thumbnail_src[0]; // Add to images array
-			}
-			// Find any images in post/page content and put into current array
-			if ( wpfbogp_find_images() !== false && is_singular() ) {
-				$wpfbogp_images = array_merge( $wpfbogp_images, wpfbogp_find_images() );
-			}
-		}
+		// First check for a fallback image
 		if ( isset( $options['wpfbogp_fallback_img'] ) && $options['wpfbogp_fallback_img'] != '') {
-			echo '<meta property="og:image" content="' . esc_url( apply_filters( 'wpfbogp_image', $options['wpfbogp_fallback_img'] ) ) . '"/>' . "\n";
+			$fallback = '<meta property="og:image" content="' . esc_url( apply_filters( 'wpfbogp_image', $options['wpfbogp_fallback_img'] ) ) . '"/>' . "\n";
+		} else {
+			$fallback = false;
 		}
-		// Make sure there were images passed as an array and loop through/output each
-		if ( ! empty( $wpfbogp_images ) && is_array( $wpfbogp_images ) ) {
-			foreach ( $wpfbogp_images as $image ) {
-				echo '<meta property="og:image" content="' . esc_url( apply_filters( 'wpfbogp_image', $image ) ) . '"/>' . "\n";
+
+		// Always output the fallback image first
+		echo $fallback;
+
+		// If the fallback isn't forced, we can now output more images
+		if ( $options['wpfbogp_force_fallback'] != 1 ) {
+			// Make sure we are on a single page, not an archive or index
+			if ( is_singular() ) {
+				// Find featured thumbnail of the current post/page
+				if ( function_exists( 'has_post_thumbnail' ) && has_post_thumbnail( $post->ID ) ) {
+					$thumbnail_src = wp_get_attachment_image_src( get_post_thumbnail_id( $post->ID ), 'medium' );
+					$wpfbogp_images[] = $thumbnail_src[0]; // Add to images array
+				}
+
+				// Find any images in post/page content and put into current array
+				if ( wpfbogp_find_images() !== false ) {
+					$wpfbogp_images = array_merge( $wpfbogp_images, wpfbogp_find_images() );
+				}
 			}
-		} elseif ( $options['wpfbogp_force_fallback'] != 1 || isset( $options['wpfbogp_fallback_img'] ) && $options['wpfbogp_fallback_img'] == '' ) {
-			// No images were outputted because they have no default image (at the very least)
+
+			// Make sure there were images passed as an array and loop through/output each
+			if ( ! empty( $wpfbogp_images ) && is_array( $wpfbogp_images ) ) {
+				foreach ( $wpfbogp_images as $image ) {
+					echo '<meta property="og:image" content="' . esc_url( apply_filters( 'wpfbogp_image', $image ) ) . '"/>' . "\n";
+				}
+			}
+		}
+
+		// No images were available
+		if ( empty( $wpfbogp_images ) && ! $fallback ) {
 			echo "<!-- There is not an image here as you haven't set a default image in the plugin settings! -->\n";
 		}
 
