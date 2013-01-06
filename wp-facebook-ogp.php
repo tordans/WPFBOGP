@@ -307,10 +307,21 @@ function wpfbogp_buildpage() {
 
 // sanitize inputs. accepts an array, return a sanitized array.
 function wpfbogp_validate($input) {
-	$input['wpfbogp_admin_ids'] = wp_filter_nohtml_kses($input['wpfbogp_admin_ids']);
-	$input['wpfbogp_app_id'] = wp_filter_nohtml_kses($input['wpfbogp_app_id']);
 	$input['wpfbogp_fallback_img'] = wp_filter_nohtml_kses($input['wpfbogp_fallback_img']);
-	$input['wpfbogp_force_fallback'] = ($input['wpfbogp_force_fallback'] == 1)  ? 1 : 0;
+	$input['wpfbogp_force_fallback'] = (isset($input['wpfbogp_force_fallback']) && $input['wpfbogp_force_fallback'] == 1)  ? 1 : 0;
+
+	if ( ! preg_match( '/^[\d\s,]*$/', $input['wpfbogp_admin_ids'] ) ) {
+		add_settings_error( 'wpfbogp_options', 'invalid-admin-ids', 'You have entered invalid admin ID(s). Please check you have entered the correct IDs.' );
+	} else {
+		$input['wpfbogp_admin_ids'] = wp_filter_nohtml_kses($input['wpfbogp_admin_ids']);
+	}
+
+	if ( ! preg_match( '/^\d+$/', $input['wpfbogp_app_id'] ) ) {
+		add_settings_error( 'wpfbogp_options', 'invalid-app-ids', 'You have entered an invalid application ID. Please check you have entered the correct ID.' );
+	} else {
+		$input['wpfbogp_app_id'] = wp_filter_nohtml_kses($input['wpfbogp_app_id']);
+	}
+
 	return $input;
 }
 
