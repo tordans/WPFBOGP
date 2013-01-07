@@ -32,6 +32,7 @@ Domain Path:    /languages/
 - change sort so default image shows up first when other images set
 - contingency for if default checkbox is set but no default image is set
 - attempt to fix allinoneseo description issue in filtering trailing slashes
+- update html namespace to prefix (ogp.me) from xmlns (facebook)  (TEST IT)
 */
 
 define('WPFBOGP_VERSION', '2.0.8b');
@@ -39,7 +40,7 @@ wpfbogp_admin_warnings();
 
 // add OGP namespace per ogp.me schema
 function wpfbogp_namespace($output) {
-	return $output.' xmlns:og="http://ogp.me/ns#"';
+	return $output.' prefix="og: http://ogp.me/ns#"';
 }
 add_filter('language_attributes','wpfbogp_namespace');
 
