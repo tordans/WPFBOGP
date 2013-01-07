@@ -127,7 +127,7 @@ function wpfbogp_build_head() {
 		echo '<meta property="og:title" content="' . esc_attr( apply_filters( 'wpfbogp_title', $wpfbogp_title ) ) . '"/>' . "\n";
 
 		// do additional randoms
-		echo '<meta property="og:site_name" content="' . get_bloginfo( 'name' ) . '"/>' . "\n";
+		echo '<meta property="og:site_name" content="' . esc_attr( get_bloginfo( 'name' ) ) . '"/>' . "\n";
 
 		// do descriptions
 		if ( is_singular() ) {
