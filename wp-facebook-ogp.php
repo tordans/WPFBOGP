@@ -31,6 +31,9 @@ Domain Path:    /languages/
 define('WPFBOGP_VERSION', '2.1b');
 wpfbogp_admin_warnings();
 
+// if jetpack is active it force feeds og meta; stop it
+remove_action( 'wp_head', 'jetpack_og_tags' );
+
 // add OGP namespace per ogp.me schema
 function wpfbogp_namespace($output) {
 	return $output.' prefix="og: http://ogp.me/ns#"';
