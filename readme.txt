@@ -87,6 +87,7 @@ Because we're getting more accurate titles you may see a change in how they're p
 * contingency for if default checkbox is set but no default image is set
 * attempt to fix allinoneseo description issue in filtering trailing slashes
 * update html namespace to prefix (ogp.me) from xmlns (facebook)
+* testing the_title_attribute('echo=0') in title drop
 
 = 2.0.7 =
 * fixes bug with certain plugins not showing description tags properly

@@ -127,7 +127,8 @@ function wpfbogp_build_head() {
 		if (is_home() || is_front_page() ) {
 			$wpfbogp_title = get_bloginfo( 'name' );
 		} else {
-			$wpfbogp_title = get_the_title();
+			//$wpfbogp_title = get_the_title();
+			$wpfbogp_title = the_title_attribute('echo=0');
 		}
 		echo '<meta property="og:title" content="' . esc_attr( apply_filters( 'wpfbogp_title', $wpfbogp_title ) ) . '"/>' . "\n";
 
