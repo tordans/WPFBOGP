@@ -7,7 +7,7 @@ Version:        2.1b
 Author:         Chuck Reynolds
 Author URI:     http://chuckreynolds.us
 License:        GPLv2
-
+License URI:    https://www.gnu.org/licenses/gpl-2.0.html
 Text Domain:    wpfbogp
 Domain Path:    /languages/
 */
@@ -245,7 +245,7 @@ function wpfbogp_buildpage() {
 			</div>
 
 			<div class="meta-box-sortables">
-				<div id="about" class="postbox">
+				<div id="ogp-info" class="postbox">
 					<h3 class="hndle" id="about-sidebar"><?php _e('Relevant Information:', 'wpfbogp') ?></h3>
 					<div class="inside">
 						<p><a href="http://ogp.me" target="_blank">The Open Graph Protocol</a><br />
@@ -261,7 +261,7 @@ function wpfbogp_buildpage() {
 		<div id="post-body" class="has-sidebar">
 			<div id="post-body-content" class="has-sidebar-content">
 				<div id="normal-sortables" class="meta-box-sortables">
-					<div id="about" class="postbox">
+					<div id="wpfbogp-options" class="postbox">
 						<div class="inside">
 
 		<form method="post" action="options.php">
