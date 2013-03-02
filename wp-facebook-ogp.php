@@ -214,7 +214,7 @@ function wpfbogp_init() {
 
 // add admin page to menu
 function wpfbogp_add_page() {
-	add_options_page('Facebook Open Graph protocol plugin','Facebook OGP','manage_options','wpfbogp','wpfbogp_buildpage');
+	add_options_page( __('Facebook Open Graph protocol plugin', 'wpfbogp'), __('Facebook OGP', 'wpfbogp'), 'manage_options', 'wpfbogp', 'wpfbogp_buildpage');
 }
 
 // build admin page
@@ -248,10 +248,10 @@ function wpfbogp_buildpage() {
 				<div id="ogp-info" class="postbox">
 					<h3 class="hndle" id="about-sidebar"><?php _e('Relevant Information:', 'wpfbogp') ?></h3>
 					<div class="inside">
-						<p><a href="http://ogp.me" target="_blank">The Open Graph Protocol</a><br />
-						<a href="https://developers.facebook.com/docs/opengraph/" target="_blank">Facebook Open Graph Docs</a><br />
-						<a href="https://developers.facebook.com/docs/insights/" target="_blank">Insights: Domain vs App vs Page</a><br />
-						<a href="https://developers.facebook.com/docs/reference/plugins/like/" target="_blank">How To Add a Like Button</a></p>
+						<p><a href="http://ogp.me" target="_blank"><?php _e('The Open Graph Protocol', 'wpfbogp') ?></a><br />
+						<a href="https://developers.facebook.com/docs/opengraph/" target="_blank"><?php _e('Facebook Open Graph Docs', 'wpfbogp') ?></a><br />
+						<a href="https://developers.facebook.com/docs/insights/" target="_blank"><?php _e('Insights: Domain vs App vs Page', 'wpfbogp') ?></a><br />
+						<a href="https://developers.facebook.com/docs/reference/plugins/like/" target="_blank"><?php _e('How To Add a Like Button', 'wpfbogp') ?></a></p>
 					</div>
 				</div>
 			</div>
@@ -311,13 +311,13 @@ function wpfbogp_validate($input) {
 	$input['wpfbogp_force_fallback'] = (isset($input['wpfbogp_force_fallback']) && $input['wpfbogp_force_fallback'] == 1)  ? 1 : 0;
 
 	if ( ! preg_match( '/^[\d\s,]*$/', $input['wpfbogp_admin_ids'] ) ) {
-		add_settings_error( 'wpfbogp_options', 'invalid-admin-ids', 'You have entered invalid admin ID(s). Please check you have entered the correct IDs.' );
+		add_settings_error( 'wpfbogp_options', 'invalid-admin-ids', __('You have entered invalid admin ID(s). Please check you have entered the correct IDs.', 'wpfbogp') );
 	} else {
 		$input['wpfbogp_admin_ids'] = wp_filter_nohtml_kses($input['wpfbogp_admin_ids']);
 	}
 
 	if ( ! preg_match( '/^\d+$/', $input['wpfbogp_app_id'] ) ) {
-		add_settings_error( 'wpfbogp_options', 'invalid-app-ids', 'You have entered an invalid application ID. Please check you have entered the correct ID.' );
+		add_settings_error( 'wpfbogp_options', 'invalid-app-ids', __('You have entered an invalid application ID. Please check you have entered the correct ID.', 'wpfbogp') );
 	} else {
 		$input['wpfbogp_app_id'] = wp_filter_nohtml_kses($input['wpfbogp_app_id']);
 	}
