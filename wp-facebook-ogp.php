@@ -31,10 +31,8 @@ Domain Path:    /languages/
 define('WPFBOGP_VERSION', '2.1b');
 wpfbogp_admin_warnings();
 
-public function __construct() {
-	// jetpack used to force it in, seems to have stopped but just for good measure
-	remove_action( 'wp_head', 'jetpack_og_tags' );
-}
+// jetpack used to force it in, seems to have stopped but just for good measure
+remove_action( 'wp_head', 'jetpack_og_tags' );
 
 // add OGP namespace per ogp.me schema
 function wpfbogp_namespace($output) {
