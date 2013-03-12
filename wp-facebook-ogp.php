@@ -229,6 +229,10 @@ function wpfbogp_buildpage() {
 					<h3 class="hndle" id="about-sidebar"><?php _e('About the Plugin:', 'wpfbogp') ?></h3>
 					<div class="inside">
 						<p><?php printf(__('Talk to %s on twitter or please fill out the %s for bugs or feature requests.', 'wpfbogp'), '<a href="http://twitter.com/chuckreynolds" target="_blank">@ChuckReynolds</a>', '<a href="http://rynoweb.com/wordpress-plugins/" target="_blank">' . __('plugin support form', 'wpfbogp') . '</a>') ?></p>
+						<p>
+							<strong><?php _e( 'Having problems?', 'wpfbogp' ); ?></strong><br>
+							<?php printf( __( 'If you are experiencing issues with the correct information appearing on Facebook, please run the URL through the <a href="%s">Facebook debugger</a> to check for errors.', 'wpfbogp' ), 'https://developers.facebook.com/tools/debug' ); ?>
+						</p>
 						<p><strong><?php _e('Enjoy the plugin?', 'wpfbogp') ?></strong><br />
 						<?php printf(__('%s and consider donating.', 'wpfbogp'), '<a href="http://twitter.com/?status=I\'m using @chuckreynolds\'s WordPress Facebook Open Graph plugin - check it out! http://rynoweb.com/wordpress-plugins/" target="_blank">' . __('Tweet about it', 'wpfbogp') . '</a>') ?></p>
 						<p><?php _e('<strong>Donate:</strong> A lot of hard work goes into building plugins - support your open source developers. Include your twitter username and I\'ll send you a shout out for your generosity. Thank you!', 'wpfbogp') ?><br />
