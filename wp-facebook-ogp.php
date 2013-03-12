@@ -359,6 +359,17 @@ function wpfbogp_add_settings_link($links, $file) {
 }
 add_filter('plugin_action_links','wpfbogp_add_settings_link', 10, 2 );
 
+function wpfbogp_admin_bar_link() {
+	global $wp_admin_bar, $wpdb, $wp;
+
+	if ( ! is_super_admin() || ! is_admin_bar_showing() )
+		return;
+
+	$current_url = add_query_arg( $wp->query_string, '', home_url( $wp->request ) );
+	$wp_admin_bar->add_menu( array( 'id' => 'wpfbogp_debug', 'title' => __( 'OGP Debug', 'wpfbogp' ), 'href' => 'https://developers.facebook.com/tools/debug?q='.$current_url ) );
+}
+add_action( 'admin_bar_menu', 'wpfbogp_admin_bar_link', 1000 );
+
 // lets offer an actual clean uninstall and rem db row on uninstall
 if (function_exists('register_uninstall_hook')) {
 	register_uninstall_hook(__FILE__, 'wpfbogp_uninstall_hook');
