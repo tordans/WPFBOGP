@@ -362,7 +362,7 @@ add_filter('plugin_action_links','wpfbogp_add_settings_link', 10, 2 );
 function wpfbogp_admin_bar_link() {
 	global $wp_admin_bar, $wpdb, $wp;
 
-	if ( ! is_super_admin() || ! is_admin_bar_showing() )
+	if ( is_admin() || ! is_super_admin() || ! is_admin_bar_showing() )
 		return;
 
 	$current_url = add_query_arg( $wp->query_string, '', home_url( $wp->request ) );
