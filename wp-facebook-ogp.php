@@ -6,26 +6,25 @@ Description:    Adds proper Facebook Open Graph Meta tags and values to your sit
 Version:        2.1b
 Author:         Chuck Reynolds
 Author URI:     http://chuckreynolds.us
-License:        GPLv2
-License URI:    https://www.gnu.org/licenses/gpl-2.0.html
+License:        GPL v3
+License URI:    http://www.gnu.org/licenses/gpl-3.0.html
 Text Domain:    wpfbogp
 Domain Path:    /languages/
 */
 /*
 	Copyright 2011 WordPress Facebook Open Graph protocol plugin (email: chuck@rynoweb.com)
 
-	This program is free software; you can redistribute it and/or modify
-	it under the terms of the GNU General Public License, version 2, as
-	published by the Free Software Foundation.
+	This program is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, version 3 of the License.
 
 	This program is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
 
 	You should have received a copy of the GNU General Public License
-	along with this program; if not, write to the Free Software
-	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
+	along with this program. If not, see http://www.gnu.org/licenses/gpl-3.0.html
 */
 
 define('WPFBOGP_VERSION', '2.1b');
