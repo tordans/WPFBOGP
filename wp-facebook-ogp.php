@@ -127,7 +127,6 @@ class WPFBOGP {
 
 		$description = preg_match( '/<meta name="description" content="(.*)"/', $content, $description_matches );
 		if ( $description !== FALSE && count( $description_matches ) == 2 ) {
-			echo '1';
 			$description = $description_matches[1];
 		} elseif ( is_singular() ) {
 			// Use any custom exceprt before simply truncating the content,
