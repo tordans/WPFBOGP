@@ -177,12 +177,14 @@ class WPFBOGP {
 			echo '<meta property="og:description" content="' . esc_attr( apply_filters( 'wpfbogp_description', $description ) ) . '" />' . "\n";
 
 			// do ogp type
-			if ( is_single() ) {
-				$wpfbogp_type = 'article';
+			if ( is_home() ) {
+				$type = 'blog';
+			} elseif ( is_single() ) {
+				$type = 'article';
 			} else {
-				$wpfbogp_type = 'website';
+				$type = 'website';
 			}
-			echo '<meta property="og:type" content="' . esc_attr( apply_filters( 'wpfbpogp_type', $wpfbogp_type ) ) . '" />' . "\n";
+			echo '<meta property="og:type" content="' . esc_attr( apply_filters( 'wpfbpogp_type', $type ) ) . '" />' . "\n";
 
 			// Find/output any images for use in the OGP tags
 			$wpfbogp_images = array();
