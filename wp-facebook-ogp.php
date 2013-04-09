@@ -112,10 +112,22 @@ class WPFBOGP {
 		} else {
 			echo "\n<!-- WordPress Facebook Open Graph protocol plugin (WPFBOGP v".self::VERSION.") http://rynoweb.com/wordpress-plugins/ -->\n";
 
-			// do fb verification fields
+			// If there are admin ID(s) to output, we must split them up and
+			// output them as an array.
 			if ( isset( $options['wpfbogp_admin_ids'] ) && ! empty( $options['wpfbogp_admin_ids'] ) ) {
-				echo '<meta property="fb:admins" content="' . esc_attr( apply_filters( 'wpfbogp_app_id', $options['wpfbogp_admin_ids'] ) ) . '" />' . "\n";
+				// Remove spaces around commas for consistent exploding
+				$admins = explode( ',', preg_replace( '/\s*,\s*/', ',', $options['wpfbogp_admin_ids'] ) );
+
+				// Allow the array of admins to be filtered
+				$admins = apply_filters( 'wpfbogp_admin_ids', $admins );
+
+				// Output a meta tag for each admin ID
+				foreach ( $admins as $admin ) {
+					echo '<meta property="fb:admins" content="' . esc_attr( $admin ) . '" />' . "\n";
+				}
 			}
+
+			// If an application ID is being used, output it
 			if ( isset( $options['wpfbogp_app_id'] ) && ! empty( $options['wpfbogp_app_id'] ) ) {
 				echo '<meta property="fb:app_id" content="' . esc_attr( apply_filters( 'wpfbogp_app_id', $options['wpfbogp_app_id'] ) ) . '" />' . "\n";
 			}
