@@ -27,48 +27,54 @@ Domain Path:    /languages/
 	along with this program. If not, see http://www.gnu.org/licenses/gpl-3.0.html
 */
 
-// lets offer an actual clean uninstall and rem db row on uninstall
-if ( function_exists( 'register_uninstall_hook' ) ) {
-	register_uninstall_hook( __FILE__, 'wpfbogp_uninstall_hook' );
-}
-
-function wpfbogp_uninstall_hook() {
-	delete_option( 'wpfbogp' );
-}
-
 class WPFBOGP {
 
 	const VERSION = '2.1';
 
 	public function __construct() {
+		// Check to see if any warnings should be shown to admins
 		$this->admin_warnings();
 
 		// Jetpack used to force it in, seems to have stopped but just for good measure
 		remove_action( 'wp_head', array( $this, 'jetpack_og_tags' ) );
 
+		// Add the OGP namespace to the <html> tag.
 		add_filter( 'language_attributes', array( $this, 'ogpprefix' ) );
 
+		// Start the output buffer early, and end it late
 		add_action( 'init', array( $this, 'buffer' ), 0 );
 		add_action( 'wp_head', array( $this, 'build_head' ), 9999 );
 
+		// Include and build the admin pages
 		add_action( 'admin_init', array( $this, 'init' ) );
 		add_action( 'admin_menu', array( $this, 'add_page' ) );
 
-		add_action( 'after_setup_theme', array( $this, 'fix_excerpts_exist' ) );
+		// Remove some default filters on the_excerpt()
+		add_action( 'after_setup_theme', array( $this, 'fix_excerpts' ) );
+
+		// Add helpful settings link to the plugins listing page
 		add_filter( 'plugin_action_links', array( $this, 'add_settings_link' ), 10, 2 );
+
+		// Adds a debug menu item to the admin bar
 		add_action( 'admin_bar_menu', array( $this, 'admin_bar_link' ), 1000 );
 	}
 
-	public function buffer() {
-		ob_start();
-	}
-
-	// add OGP namespace per ogp.me schema
+	/**
+	 * Add OGP namespace per ogp.me schema
+	 *
+	 * @param  string $output
+	 * @return string
+	 */
 	public function ogpprefix( $output ) {
 		return $output.' prefix="og: http://ogp.me/ns#"';
 	}
 
-	// function to call first uploaded image in content
+	/**
+	 * Finds the first image in the post content if post thumbnails aren't
+	 * available.
+	 *
+	 * @return array
+	 */
 	public function find_images() {
 		global $post, $posts;
 
@@ -144,7 +150,21 @@ class WPFBOGP {
 		return $description;
 	}
 
-	// build ogp meta
+	/**
+	 * Starts the output buffer at the very beginning of wp_head().
+	 *
+	 * @return void
+	 */
+	public function buffer() {
+		ob_start();
+	}
+
+	/**
+	 * The heart of the plugin, which outputs the entire meta tag output
+	 * to the wp_head() action.
+	 *
+	 * @return string
+	 */
 	public function build_head() {
 		global $post;
 		$options = get_option( 'wpfbogp' );
@@ -276,12 +296,20 @@ class WPFBOGP {
 		load_plugin_textdomain( 'wpfbogp', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
 	}
 
-	// add admin page to menu
+	/**
+	 * Add admin page to the WordPress menu
+	 *
+	 * @return void
+	 */
 	public function add_page() {
 		add_options_page( __( 'Facebook Open Graph protocol plugin', 'wpfbogp' ), __( 'Facebook OGP', 'wpfbogp' ), 'manage_options', 'wpfbogp', array( $this, 'buildpage' ) );
 	}
 
-	// build admin page
+	/**
+	 * Admin page output
+	 *
+	 * @return void
+	 */
 	public function buildpage() {
 		load_plugin_textdomain( 'wpfbogp', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
 		?>
@@ -371,7 +399,12 @@ class WPFBOGP {
 		<?php
 	}
 
-	// sanitize inputs. accepts an array, return a sanitized array.
+	/**
+	 * Sanitize and validate user input from the settings pages.
+	 *
+	 * @param  array $input
+	 * @return array
+	 */
 	public function validate( $input ) {
 		$input['wpfbogp_fallback_img'] = wp_filter_nohtml_kses( $input['wpfbogp_fallback_img'] );
 		$input['wpfbogp_force_fallback'] = ( isset( $input['wpfbogp_force_fallback'] ) && $input['wpfbogp_force_fallback'] == 1 )  ? 1 : 0;
@@ -420,13 +453,19 @@ class WPFBOGP {
 		}
 	}
 
-	// twentyten and twentyeleven add crap to the excerpt so lets check for that and remove
-	public function fix_excerpts_exist() {
+	/**
+	 * Twentyten and Twentyeleven add crap to the excerpt so lets check for that and remove
+	 *
+	 * @return  void
+	 */
+	public function fix_excerpts() {
 		remove_filter( 'get_the_excerpt', 'twentyten_custom_excerpt_more' );
 		remove_filter( 'get_the_excerpt', 'twentyeleven_custom_excerpt_more' );
 	}
 
-	// add settings link to plugins list
+	/**
+	 * Add settings link to plugins list
+	 */
 	public function add_settings_link( $links, $file ) {
 		static $this_plugin;
 		if ( !$this_plugin ) $this_plugin = plugin_basename( __FILE__ );
@@ -437,6 +476,12 @@ class WPFBOGP {
 		return $links;
 	}
 
+	/**
+	 * Adds a menu item to the admin bar to easily debug the page using the
+	 * Facebook URL debugger.
+	 *
+	 * @return void
+	 */
 	public function admin_bar_link() {
 		global $wp_admin_bar, $wpdb, $wp;
 
@@ -449,4 +494,21 @@ class WPFBOGP {
 
 }
 
+// Start the plugin
 $wpfbogp = new WPFBOGP;
+
+/**
+ * Lets offer an actual clean uninstall and remove the options from the DB.
+ */
+if ( function_exists( 'register_uninstall_hook' ) ) {
+	register_uninstall_hook( __FILE__, 'wpfbogp_uninstall_hook' );
+}
+
+/**
+ * Simply deletes the wpfbogp option from the database.
+ *
+ * @return void
+ */
+function wpfbogp_uninstall_hook() {
+	delete_option( 'wpfbogp' );
+}
