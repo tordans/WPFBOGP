@@ -160,107 +160,108 @@ class WPFBOGP {
 		// check to see if you've filled out one of the required fields and announce if not
 		if ( ( ! isset( $options['wpfbogp_admin_ids'] ) || empty( $options['wpfbogp_admin_ids'] ) ) && ( ! isset( $options['wpfbogp_app_id'] ) || empty( $options['wpfbogp_app_id'] ) ) ) {
 			echo "\n<!-- Facebook Open Graph protocol plugin NEEDS an admin or app ID to work, please visit the plugin settings page! -->\n";
-		} else {
-			echo "\n<!-- WordPress Facebook Open Graph protocol plugin (WPFBOGP v".self::VERSION.") http://rynoweb.com/wordpress-plugins/ -->\n";
-
-			// If there are admin ID(s) to output, we must split them up and
-			// output them as an array.
-			if ( isset( $options['wpfbogp_admin_ids'] ) && ! empty( $options['wpfbogp_admin_ids'] ) ) {
-				// Remove spaces around commas for consistent exploding
-				$admins = explode( ',', preg_replace( '/\s*,\s*/', ',', $options['wpfbogp_admin_ids'] ) );
-
-				// Allow the array of admins to be filtered
-				$admins = apply_filters( 'wpfbogp_admin_ids', $admins );
-
-				// Output a meta tag for each admin ID
-				foreach ( $admins as $admin ) {
-					echo '<meta property="fb:admins" content="' . esc_attr( $admin ) . '" />' . "\n";
-				}
-			}
-
-			// If an application ID is being used, output it
-			if ( isset( $options['wpfbogp_app_id'] ) && ! empty( $options['wpfbogp_app_id'] ) ) {
-				echo '<meta property="fb:app_id" content="' . esc_attr( apply_filters( 'wpfbogp_app_id', $options['wpfbogp_app_id'] ) ) . '" />' . "\n";
-			}
-
-			// do url stuff
-			if ( is_home() || is_front_page() ) {
-				$wpfbogp_url = get_bloginfo( 'url' );
-			} else {
-				$wpfbogp_url = 'http' . ( is_ssl() ? 's' : '' ) . "://".$_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
-			}
-			echo '<meta property="og:url" content="' . esc_url( apply_filters( 'wpfbogp_url', $wpfbogp_url ) ) . '" />' . "\n";
-
-			// First we will attempt to match the content of the <title> tags,
-			// to capture any changes that were done by an SEO plugin. If that
-			// fails, then we fall back to the blog name or the post name.
-			$title = $this->get_title( $content );
-			echo '<meta property="og:title" content="' . esc_attr( apply_filters( 'wpfbogp_title', $title ) ) . '" />' . "\n";
-
-			// Site title
-			echo '<meta property="og:site_name" content="' . esc_attr( apply_filters( 'wpfbogp_site_name', get_bloginfo( 'name' ) ) ) . '" />' . "\n";
-
-			// We follow the same flow as titles, where we try to match any
-			// existing description before moving onto the fallbacks.
-			$description = $this->get_description( $content );
-			echo '<meta property="og:description" content="' . esc_attr( apply_filters( 'wpfbogp_description', $description ) ) . '" />' . "\n";
-
-			// do ogp type
-			if ( is_home() ) {
-				$type = 'blog';
-			} elseif ( is_single() ) {
-				$type = 'article';
-			} else {
-				$type = 'website';
-			}
-			echo '<meta property="og:type" content="' . esc_attr( apply_filters( 'wpfbpogp_type', $type ) ) . '" />' . "\n";
-
-			// Find/output any images for use in the OGP tags
-			$wpfbogp_images = array();
-
-			// First check for a fallback image
-			if ( isset( $options['wpfbogp_fallback_img'] ) && $options['wpfbogp_fallback_img'] != '' ) {
-				$fallback = '<meta property="og:image" content="' . esc_url( apply_filters( 'wpfbogp_image', $options['wpfbogp_fallback_img'] ) ) . '" />' . "\n";
-			} else {
-				$fallback = false;
-			}
-
-			// Always output the fallback image first
-			echo $fallback;
-
-			// If the fallback isn't forced, we can now output more images
-			if ( $options['wpfbogp_force_fallback'] != 1 ) {
-				// Make sure we are on a single page, not an archive or index
-				if ( is_singular() ) {
-					// Find featured thumbnail of the current post/page
-					if ( function_exists( 'has_post_thumbnail' ) && has_post_thumbnail( $post->ID ) ) {
-						$thumbnail_src = wp_get_attachment_image_src( get_post_thumbnail_id( $post->ID ), 'medium' );
-						$wpfbogp_images[] = $thumbnail_src[0]; // Add to images array
-					}
-
-					// Find any images in post/page content and put into current array
-					if ( $this->find_images() !== false ) {
-						$wpfbogp_images = array_merge( $wpfbogp_images, $this->find_images() );
-					}
-				}
-
-				// Make sure there were images passed as an array and loop through/output each
-				if ( ! empty( $wpfbogp_images ) && is_array( $wpfbogp_images ) ) {
-					foreach ( $wpfbogp_images as $image ) {
-						echo '<meta property="og:image" content="' . esc_url( apply_filters( 'wpfbogp_image', $image ) ) . '" />' . "\n";
-					}
-				}
-			}
-
-			// No images were available
-			if ( empty( $wpfbogp_images ) && ! $fallback ) {
-				echo "<!-- There is not an image here as you haven't set a default image in the plugin settings! -->\n";
-			}
-
-			// do locale // make lower case cause facebook freaks out and shits parser mismatched metadata warning
-			echo '<meta property="og:locale" content="' . strtolower( esc_attr( get_locale() ) ) . '" />' . "\n";
-			echo "<!-- // end wpfbogp -->\n";
+			return;
 		}
+
+		echo "\n<!-- WordPress Facebook Open Graph protocol plugin (WPFBOGP v".self::VERSION.") http://rynoweb.com/wordpress-plugins/ -->\n";
+
+		// If there are admin ID(s) to output, we must split them up and
+		// output them as an array.
+		if ( isset( $options['wpfbogp_admin_ids'] ) && ! empty( $options['wpfbogp_admin_ids'] ) ) {
+			// Remove spaces around commas for consistent exploding
+			$admins = explode( ',', preg_replace( '/\s*,\s*/', ',', $options['wpfbogp_admin_ids'] ) );
+
+			// Allow the array of admins to be filtered
+			$admins = apply_filters( 'wpfbogp_admin_ids', $admins );
+
+			// Output a meta tag for each admin ID
+			foreach ( $admins as $admin ) {
+				echo '<meta property="fb:admins" content="' . esc_attr( $admin ) . '" />' . "\n";
+			}
+		}
+
+		// If an application ID is being used, output it
+		if ( isset( $options['wpfbogp_app_id'] ) && ! empty( $options['wpfbogp_app_id'] ) ) {
+			echo '<meta property="fb:app_id" content="' . esc_attr( apply_filters( 'wpfbogp_app_id', $options['wpfbogp_app_id'] ) ) . '" />' . "\n";
+		}
+
+		// do url stuff
+		if ( is_home() || is_front_page() ) {
+			$wpfbogp_url = get_bloginfo( 'url' );
+		} else {
+			$wpfbogp_url = 'http' . ( is_ssl() ? 's' : '' ) . "://".$_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+		}
+		echo '<meta property="og:url" content="' . esc_url( apply_filters( 'wpfbogp_url', $wpfbogp_url ) ) . '" />' . "\n";
+
+		// First we will attempt to match the content of the <title> tags,
+		// to capture any changes that were done by an SEO plugin. If that
+		// fails, then we fall back to the blog name or the post name.
+		$title = $this->get_title( $content );
+		echo '<meta property="og:title" content="' . esc_attr( apply_filters( 'wpfbogp_title', $title ) ) . '" />' . "\n";
+
+		// Site title
+		echo '<meta property="og:site_name" content="' . esc_attr( apply_filters( 'wpfbogp_site_name', get_bloginfo( 'name' ) ) ) . '" />' . "\n";
+
+		// We follow the same flow as titles, where we try to match any
+		// existing description before moving onto the fallbacks.
+		$description = $this->get_description( $content );
+		echo '<meta property="og:description" content="' . esc_attr( apply_filters( 'wpfbogp_description', $description ) ) . '" />' . "\n";
+
+		// do ogp type
+		if ( is_home() ) {
+			$type = 'blog';
+		} elseif ( is_single() ) {
+			$type = 'article';
+		} else {
+			$type = 'website';
+		}
+		echo '<meta property="og:type" content="' . esc_attr( apply_filters( 'wpfbpogp_type', $type ) ) . '" />' . "\n";
+
+		// Find/output any images for use in the OGP tags
+		$wpfbogp_images = array();
+
+		// First check for a fallback image
+		if ( isset( $options['wpfbogp_fallback_img'] ) && $options['wpfbogp_fallback_img'] != '' ) {
+			$fallback = '<meta property="og:image" content="' . esc_url( apply_filters( 'wpfbogp_image', $options['wpfbogp_fallback_img'] ) ) . '" />' . "\n";
+		} else {
+			$fallback = false;
+		}
+
+		// Always output the fallback image first
+		echo $fallback;
+
+		// If the fallback isn't forced, we can now output more images
+		if ( $options['wpfbogp_force_fallback'] != 1 ) {
+			// Make sure we are on a single page, not an archive or index
+			if ( is_singular() ) {
+				// Find featured thumbnail of the current post/page
+				if ( function_exists( 'has_post_thumbnail' ) && has_post_thumbnail( $post->ID ) ) {
+					$thumbnail_src = wp_get_attachment_image_src( get_post_thumbnail_id( $post->ID ), 'medium' );
+					$wpfbogp_images[] = $thumbnail_src[0]; // Add to images array
+				}
+
+				// Find any images in post/page content and put into current array
+				if ( $this->find_images() !== false ) {
+					$wpfbogp_images = array_merge( $wpfbogp_images, $this->find_images() );
+				}
+			}
+
+			// Make sure there were images passed as an array and loop through/output each
+			if ( ! empty( $wpfbogp_images ) && is_array( $wpfbogp_images ) ) {
+				foreach ( $wpfbogp_images as $image ) {
+					echo '<meta property="og:image" content="' . esc_url( apply_filters( 'wpfbogp_image', $image ) ) . '" />' . "\n";
+				}
+			}
+		}
+
+		// No images were available
+		if ( empty( $wpfbogp_images ) && ! $fallback ) {
+			echo "<!-- There is not an image here as you haven't set a default image in the plugin settings! -->\n";
+		}
+
+		// do locale // make lower case cause facebook freaks out and shits parser mismatched metadata warning
+		echo '<meta property="og:locale" content="' . strtolower( esc_attr( get_locale() ) ) . '" />' . "\n";
+		echo "<!-- // end wpfbogp -->\n";
 	}
 
 	/**
