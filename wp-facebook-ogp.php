@@ -225,9 +225,17 @@ class WPFBOGP {
 		}
 	}
 
-	// register settings and sanitization callback
+	/**
+	 * Initializes the plugin including settings and localization.
+	 *
+	 * @return void
+	 */
 	public function init() {
+		// Register settings and sanitization callback
 		register_setting( 'wpfbogp_options', 'wpfbogp', array( $this, 'validate' ) );
+
+		// Load localization
+		load_plugin_textdomain( 'wpfbogp', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
 	}
 
 	// add admin page to menu
@@ -345,18 +353,33 @@ class WPFBOGP {
 		return $input;
 	}
 
-	// run admin notices on activation or if settings not set
+	/**
+	 * Run admin notices on activation or if settings not set.
+	 *
+	 * @return void
+	 */
 	public function admin_warnings() {
-		load_plugin_textdomain( 'wpfbogp', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
 		global $wpfbogp_admins;
+
+		// Notices should be only displayed for admin users
 		$wpfbogp_data = get_option( 'wpfbogp' );
-		if ( ( empty( $wpfbogp_data['wpfbogp_admin_ids'] ) || $wpfbogp_data['wpfbogp_admin_ids'] == '' ) && ( empty( $wpfbogp_data['wpfbogp_app_id'] ) || $wpfbogp_data['wpfbogp_app_id'] == '' ) ) {
+
+		if ( empty( $wpfbogp_data['wpfbogp_admin_ids'] ) && empty( $wpfbogp_data['wpfbogp_app_id'] ) ) {
 			add_action( 'admin_notices', array( $this, 'almost_ready' ) );
 		}
 	}
 
+	/**
+	 * Displays the "almost ready" message for admins. Check for admin is done
+	 * in this function because admin_warnings() is called too early.
+	 *
+	 * @return string
+	 */
 	public function almost_ready() {
-		echo "<div id='wpfbogp-warning' class='updated fade'><p><strong>" . __( 'WP FB OGP is almost ready.', 'wpfbogp' ) . "</strong> " . sprintf( __( 'You must %s for it to work.', 'wpfbogp' ), '<a href="options-general.php?page=wpfbogp">' . __( 'enter your Facebook User ID or App ID', 'wpfbogp' ) . '</a>' ) . "</p></div>";
+		// The notice should only be displayed if both ID fields are empty
+		if ( current_user_can( 'manage_options' ) ) {
+			echo "<div id='wpfbogp-warning' class='updated fade'><p><strong>" . __( 'WP FB OGP is almost ready.', 'wpfbogp' ) . "</strong> " . sprintf( __( 'You must %s for it to work.', 'wpfbogp' ), '<a href="options-general.php?page=wpfbogp">' . __( 'enter your Facebook User ID or App ID', 'wpfbogp' ) . '</a>' ) . "</p></div>";
+		}
 	}
 
 	// twentyten and twentyeleven add crap to the excerpt so lets check for that and remove
