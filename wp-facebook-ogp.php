@@ -200,8 +200,8 @@ class WPFBOGP {
 					}
 
 					// Find any images in post/page content and put into current array
-					if ( wpfbogp_find_images() !== false ) {
-						$wpfbogp_images = array_merge( $wpfbogp_images, wpfbogp_find_images() );
+					if ( $this->find_images() !== false ) {
+						$wpfbogp_images = array_merge( $wpfbogp_images, $this->find_images() );
 					}
 				}
 
