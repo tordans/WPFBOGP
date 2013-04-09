@@ -3,7 +3,7 @@
 Plugin Name:    WP Facebook Open Graph protocol
 Plugin URI:     http://wordpress.org/extend/plugins/wp-facebook-open-graph-protocol/
 Description:    Adds proper Facebook Open Graph Meta tags and values to your site so when links are shared it looks awesome! Works on Google + and Linkedin too!
-Version:        2.1b
+Version:        2.1
 Author:         Chuck Reynolds
 Author URI:     http://chuckreynolds.us
 License:        GPLv2
@@ -28,352 +28,364 @@ Domain Path:    /languages/
 	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 */
 
-define('WPFBOGP_VERSION', '2.1b');
-wpfbogp_admin_warnings();
-
-// jetpack used to force it in, seems to have stopped but just for good measure
-remove_action( 'wp_head', 'jetpack_og_tags' );
-
-// add OGP namespace per ogp.me schema
-function wpfbogp_namespace($output) {
-	return $output.' prefix="og: http://ogp.me/ns#"';
+// lets offer an actual clean uninstall and rem db row on uninstall
+if ( function_exists( 'register_uninstall_hook' ) ) {
+	register_uninstall_hook( __FILE__, 'wpfbogp_uninstall_hook' );
 }
-add_filter('language_attributes','wpfbogp_namespace');
 
-// function to call first uploaded image in content
-function wpfbogp_find_images() {
-	global $post, $posts;
+function wpfbogp_uninstall_hook() {
+	delete_option( 'wpfbogp' );
+}
 
-	// Grab content and match first image
-	$content = $post->post_content;
-	$output = preg_match_all( '/<img.+src=[\'"]([^\'"]+)[\'"].*>/i', $content, $matches );
+class WPFBOGP {
 
-	// Make sure there was an image that was found, otherwise return false
-	if ( $output === FALSE ) {
-		return false;
+	const VERSION = '2.1';
+
+	public function __construct() {
+		$this->admin_warnings();
+
+		// Jetpack used to force it in, seems to have stopped but just for good measure
+		remove_action( 'wp_head', array( $this, 'jetpack_og_tags' ) );
+
+		add_filter( 'language_attributes', array( $this, 'ogpprefix' ) );
+		add_action( 'init', array( $this, 'start_ob' ), 0 );
+
+		// Fire after other plugins (which default to priority 10)
+		add_action( 'wp_footer', array( $this, 'flush_ob' ), 10000 );
+
+		add_action( 'wp_head', array( $this, 'build_head' ), 50 );
+		add_action( 'admin_init', array( $this, 'init' ) );
+		add_action( 'admin_menu', array( $this, 'add_page' ) );
+
+		add_action( 'after_setup_theme', array( $this, 'fix_excerpts_exist' ) );
+		add_filter( 'plugin_action_links', array( $this, 'add_settings_link' ), 10, 2 );
+		add_action( 'admin_bar_menu', array( $this, 'admin_bar_link' ), 1000 );
 	}
 
-	$wpfbogp_images = array();
-	foreach ( $matches[1] as $match ) {
-		// If the image path is relative, add the site url to the beginning
-		if ( ! preg_match('/^https?:\/\//', $match ) ) {
-			// Remove any starting slash with ltrim() and add one to the end of site_url()
-			$match = site_url( '/' ) . ltrim( $match, '/' );
-		}
-		$wpfbogp_images[] = $match;
+	// add OGP namespace per ogp.me schema
+	public function ogpprefix( $output ) {
+		return $output.' prefix="og: http://ogp.me/ns#"';
 	}
 
-	return $wpfbogp_images;
-}
+	// function to call first uploaded image in content
+	public function find_images() {
+		global $post, $posts;
 
-function wpfbogp_start_ob() {
-	// Start the buffer before any output
-	ob_start( 'wpfbogp_callback' );
-}
+		// Grab content and match first image
+		$content = $post->post_content;
+		$output = preg_match_all( '/<img.+src=[\'"]([^\'"]+)[\'"].*>/i', $content, $matches );
 
-function wpfbogp_callback( $content ) {
-	// Grab the page title and meta description
-	$title = preg_match( '/<title>(.*)<\/title>/', $content, $title_matches );
-	$description = preg_match( '/<meta name="description" content="(.*)"/', $content, $description_matches );
-
-	// Take page title and meta description and place it in the ogp meta tags
-	if ( $title !== FALSE && count( $title_matches ) == 2 ) {
-		$content = preg_replace( '/<meta property="og:title" content="(.*)"\/>/', '<meta property="og:title" content="' . $title_matches[1] . '"/>', $content );
-	}
-
-	if ( $description !== FALSE && count( $description_matches ) == 2 ) {
-		$content = preg_replace( '/<meta property="og:description" content="(.*)"\/>/', '<meta property="og:description" content="' . $description_matches[1] . '"/>', $content );
-	}
-
-	return $content;
-}
-
-function wpfbogp_flush_ob() {
-	ob_end_flush();
-}
-
-add_action( 'init', 'wpfbogp_start_ob', 0 );
-add_action( 'wp_footer', 'wpfbogp_flush_ob', 10000 ); // Fire after other plugins (which default to priority 10)
-
-// build ogp meta
-function wpfbogp_build_head() {
-	global $post;
-	$options = get_option('wpfbogp');
-	// check to see if you've filled out one of the required fields and announce if not
-	if ( ( ! isset( $options['wpfbogp_admin_ids'] ) || empty( $options['wpfbogp_admin_ids'] ) ) && ( ! isset( $options['wpfbogp_app_id'] ) || empty( $options['wpfbogp_app_id'] ) ) ) {
-		echo "\n<!-- Facebook Open Graph protocol plugin NEEDS an admin or app ID to work, please visit the plugin settings page! -->\n";
-	} else {
-		echo "\n<!-- WordPress Facebook Open Graph protocol plugin (WPFBOGP v".WPFBOGP_VERSION.") http://rynoweb.com/wordpress-plugins/ -->\n";
-
-		// do fb verification fields
-		if ( isset( $options['wpfbogp_admin_ids'] ) && ! empty( $options['wpfbogp_admin_ids'] ) ) {
-			echo '<meta property="fb:admins" content="' . esc_attr( apply_filters( 'wpfbogp_app_id', $options['wpfbogp_admin_ids'] ) ) . '"/>' . "\n";
-		}
-		if ( isset( $options['wpfbogp_app_id'] ) && ! empty( $options['wpfbogp_app_id'] ) ) {
-			echo '<meta property="fb:app_id" content="' . esc_attr( apply_filters( 'wpfbogp_app_id', $options['wpfbogp_app_id'] ) ) . '"/>' . "\n";
+		// Make sure there was an image that was found, otherwise return false
+		if ( $output === FALSE ) {
+			return false;
 		}
 
-		// do url stuff
-		if (is_home() || is_front_page() ) {
-			$wpfbogp_url = get_bloginfo( 'url' );
+		$images = array();
+		foreach ( $matches[1] as $match ) {
+			// If the image path is relative, add the site url to the beginning
+			if ( ! preg_match( '/^https?:\/\//', $match ) ) {
+				// Remove any starting slash with ltrim() and add one to the end of site_url()
+				$match = site_url( '/' ) . ltrim( $match, '/' );
+			}
+			$images[] = $match;
+		}
+
+		return $images;
+	}
+
+	public function start_ob() {
+		// Start the buffer before any output
+		ob_start( array( $this, 'callback' ) );
+	}
+
+	public function callback( $content ) {
+		// Grab the page title and meta description
+		$title = preg_match( '/<title>(.*)<\/title>/', $content, $title_matches );
+		$description = preg_match( '/<meta name="description" content="(.*)"/', $content, $description_matches );
+
+		// Take page title and meta description and place it in the ogp meta tags
+		if ( $title !== FALSE && count( $title_matches ) == 2 ) {
+			$content = preg_replace( '/<meta property="og:title" content="(.*)"\/>/', '<meta property="og:title" content="' . $title_matches[1] . '"/>', $content );
+		}
+
+		if ( $description !== FALSE && count( $description_matches ) == 2 ) {
+			$content = preg_replace( '/<meta property="og:description" content="(.*)"\/>/', '<meta property="og:description" content="' . $description_matches[1] . '"/>', $content );
+		}
+
+		return $content;
+	}
+
+	public function flush_ob() {
+		ob_end_flush();
+	}
+
+	// build ogp meta
+	public function build_head() {
+		global $post;
+		$options = get_option( 'wpfbogp' );
+		// check to see if you've filled out one of the required fields and announce if not
+		if ( ( ! isset( $options['wpfbogp_admin_ids'] ) || empty( $options['wpfbogp_admin_ids'] ) ) && ( ! isset( $options['wpfbogp_app_id'] ) || empty( $options['wpfbogp_app_id'] ) ) ) {
+			echo "\n<!-- Facebook Open Graph protocol plugin NEEDS an admin or app ID to work, please visit the plugin settings page! -->\n";
 		} else {
-			$wpfbogp_url = 'http' . (is_ssl() ? 's' : '') . "://".$_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
-		}
-		echo '<meta property="og:url" content="' . esc_url( apply_filters( 'wpfbogp_url', $wpfbogp_url ) ) . '"/>' . "\n";
+			echo "\n<!-- WordPress Facebook Open Graph protocol plugin (WPFBOGP v".self::VERSION.") http://rynoweb.com/wordpress-plugins/ -->\n";
 
-		// do title stuff
-		if (is_home() || is_front_page() ) {
-			$wpfbogp_title = get_bloginfo( 'name' );
-		} else {
-			//$wpfbogp_title = get_the_title();
-			$wpfbogp_title = the_title_attribute('echo=0');
-		}
-		echo '<meta property="og:title" content="' . esc_attr( apply_filters( 'wpfbogp_title', $wpfbogp_title ) ) . '"/>' . "\n";
+			// do fb verification fields
+			if ( isset( $options['wpfbogp_admin_ids'] ) && ! empty( $options['wpfbogp_admin_ids'] ) ) {
+				echo '<meta property="fb:admins" content="' . esc_attr( apply_filters( 'wpfbogp_app_id', $options['wpfbogp_admin_ids'] ) ) . '"/>' . "\n";
+			}
+			if ( isset( $options['wpfbogp_app_id'] ) && ! empty( $options['wpfbogp_app_id'] ) ) {
+				echo '<meta property="fb:app_id" content="' . esc_attr( apply_filters( 'wpfbogp_app_id', $options['wpfbogp_app_id'] ) ) . '"/>' . "\n";
+			}
 
-		// do additional randoms
-		echo '<meta property="og:site_name" content="' . esc_attr( get_bloginfo( 'name' ) ) . '"/>' . "\n";
-
-		// do descriptions
-		if ( is_singular() ) {
-			if ( has_excerpt( $post->ID ) ) {
-				$wpfbogp_description = strip_tags( get_the_excerpt( $post->ID ) );
+			// do url stuff
+			if ( is_home() || is_front_page() ) {
+				$wpfbogp_url = get_bloginfo( 'url' );
 			} else {
-				$wpfbogp_description = str_replace( "\r\n", ' ' , substr( strip_tags( strip_shortcodes( $post->post_content ) ), 0, 160 ) );
+				$wpfbogp_url = 'http' . ( is_ssl() ? 's' : '' ) . "://".$_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
 			}
-		} else {
-			$wpfbogp_description = get_bloginfo( 'description' );
-		}
-		echo '<meta property="og:description" content="' . esc_attr( apply_filters( 'wpfbogp_description', $wpfbogp_description ) ) . '"/>' . "\n";
+			echo '<meta property="og:url" content="' . esc_url( apply_filters( 'wpfbogp_url', $wpfbogp_url ) ) . '"/>' . "\n";
 
-		// do ogp type
-		if ( is_single() ) {
-			$wpfbogp_type = 'article';
-		} else {
-			$wpfbogp_type = 'website';
-		}
-		echo '<meta property="og:type" content="' . esc_attr( apply_filters( 'wpfbpogp_type', $wpfbogp_type ) ) . '"/>' . "\n";
+			// do title stuff
+			if ( is_home() || is_front_page() ) {
+				$wpfbogp_title = get_bloginfo( 'name' );
+			} else {
+				//$wpfbogp_title = get_the_title();
+				$wpfbogp_title = the_title_attribute( 'echo=0' );
+			}
+			echo '<meta property="og:title" content="' . esc_attr( apply_filters( 'wpfbogp_title', $wpfbogp_title ) ) . '"/>' . "\n";
 
-		// Find/output any images for use in the OGP tags
-		$wpfbogp_images = array();
+			// do additional randoms
+			echo '<meta property="og:site_name" content="' . esc_attr( get_bloginfo( 'name' ) ) . '"/>' . "\n";
 
-		// First check for a fallback image
-		if ( isset( $options['wpfbogp_fallback_img'] ) && $options['wpfbogp_fallback_img'] != '') {
-			$fallback = '<meta property="og:image" content="' . esc_url( apply_filters( 'wpfbogp_image', $options['wpfbogp_fallback_img'] ) ) . '"/>' . "\n";
-		} else {
-			$fallback = false;
-		}
-
-		// Always output the fallback image first
-		echo $fallback;
-
-		// If the fallback isn't forced, we can now output more images
-		if ( $options['wpfbogp_force_fallback'] != 1 ) {
-			// Make sure we are on a single page, not an archive or index
+			// do descriptions
 			if ( is_singular() ) {
-				// Find featured thumbnail of the current post/page
-				if ( function_exists( 'has_post_thumbnail' ) && has_post_thumbnail( $post->ID ) ) {
-					$thumbnail_src = wp_get_attachment_image_src( get_post_thumbnail_id( $post->ID ), 'medium' );
-					$wpfbogp_images[] = $thumbnail_src[0]; // Add to images array
+				if ( has_excerpt( $post->ID ) ) {
+					$wpfbogp_description = strip_tags( get_the_excerpt( $post->ID ) );
+				} else {
+					$wpfbogp_description = str_replace( "\r\n", ' ' , substr( strip_tags( strip_shortcodes( $post->post_content ) ), 0, 160 ) );
+				}
+			} else {
+				$wpfbogp_description = get_bloginfo( 'description' );
+			}
+			echo '<meta property="og:description" content="' . esc_attr( apply_filters( 'wpfbogp_description', $wpfbogp_description ) ) . '"/>' . "\n";
+
+			// do ogp type
+			if ( is_single() ) {
+				$wpfbogp_type = 'article';
+			} else {
+				$wpfbogp_type = 'website';
+			}
+			echo '<meta property="og:type" content="' . esc_attr( apply_filters( 'wpfbpogp_type', $wpfbogp_type ) ) . '"/>' . "\n";
+
+			// Find/output any images for use in the OGP tags
+			$wpfbogp_images = array();
+
+			// First check for a fallback image
+			if ( isset( $options['wpfbogp_fallback_img'] ) && $options['wpfbogp_fallback_img'] != '' ) {
+				$fallback = '<meta property="og:image" content="' . esc_url( apply_filters( 'wpfbogp_image', $options['wpfbogp_fallback_img'] ) ) . '"/>' . "\n";
+			} else {
+				$fallback = false;
+			}
+
+			// Always output the fallback image first
+			echo $fallback;
+
+			// If the fallback isn't forced, we can now output more images
+			if ( $options['wpfbogp_force_fallback'] != 1 ) {
+				// Make sure we are on a single page, not an archive or index
+				if ( is_singular() ) {
+					// Find featured thumbnail of the current post/page
+					if ( function_exists( 'has_post_thumbnail' ) && has_post_thumbnail( $post->ID ) ) {
+						$thumbnail_src = wp_get_attachment_image_src( get_post_thumbnail_id( $post->ID ), 'medium' );
+						$wpfbogp_images[] = $thumbnail_src[0]; // Add to images array
+					}
+
+					// Find any images in post/page content and put into current array
+					if ( wpfbogp_find_images() !== false ) {
+						$wpfbogp_images = array_merge( $wpfbogp_images, wpfbogp_find_images() );
+					}
 				}
 
-				// Find any images in post/page content and put into current array
-				if ( wpfbogp_find_images() !== false ) {
-					$wpfbogp_images = array_merge( $wpfbogp_images, wpfbogp_find_images() );
+				// Make sure there were images passed as an array and loop through/output each
+				if ( ! empty( $wpfbogp_images ) && is_array( $wpfbogp_images ) ) {
+					foreach ( $wpfbogp_images as $image ) {
+						echo '<meta property="og:image" content="' . esc_url( apply_filters( 'wpfbogp_image', $image ) ) . '"/>' . "\n";
+					}
 				}
 			}
 
-			// Make sure there were images passed as an array and loop through/output each
-			if ( ! empty( $wpfbogp_images ) && is_array( $wpfbogp_images ) ) {
-				foreach ( $wpfbogp_images as $image ) {
-					echo '<meta property="og:image" content="' . esc_url( apply_filters( 'wpfbogp_image', $image ) ) . '"/>' . "\n";
-				}
+			// No images were available
+			if ( empty( $wpfbogp_images ) && ! $fallback ) {
+				echo "<!-- There is not an image here as you haven't set a default image in the plugin settings! -->\n";
 			}
-		}
 
-		// No images were available
-		if ( empty( $wpfbogp_images ) && ! $fallback ) {
-			echo "<!-- There is not an image here as you haven't set a default image in the plugin settings! -->\n";
+			// do locale // make lower case cause facebook freaks out and shits parser mismatched metadata warning
+			echo '<meta property="og:locale" content="' . strtolower( esc_attr( get_locale() ) ) . '"/>' . "\n";
+			echo "<!-- // end wpfbogp -->\n";
 		}
-
-		// do locale // make lower case cause facebook freaks out and shits parser mismatched metadata warning
-		echo '<meta property="og:locale" content="' . strtolower( esc_attr( get_locale() ) ) . '"/>' . "\n";
-		echo "<!-- // end wpfbogp -->\n";
 	}
-}
 
-add_action('wp_head','wpfbogp_build_head',50);
-add_action('admin_init','wpfbogp_init');
-add_action('admin_menu','wpfbogp_add_page');
+	// register settings and sanitization callback
+	public function init() {
+		register_setting( 'wpfbogp_options', 'wpfbogp', array( $this, 'validate' ) );
+	}
 
-// register settings and sanitization callback
-function wpfbogp_init() {
-	register_setting('wpfbogp_options','wpfbogp','wpfbogp_validate');
-}
+	// add admin page to menu
+	public function add_page() {
+		add_options_page( __( 'Facebook Open Graph protocol plugin', 'wpfbogp' ), __( 'Facebook OGP', 'wpfbogp' ), 'manage_options', 'wpfbogp', array( $this, 'buildpage' ) );
+	}
 
-// add admin page to menu
-function wpfbogp_add_page() {
-	add_options_page( __('Facebook Open Graph protocol plugin', 'wpfbogp'), __('Facebook OGP', 'wpfbogp'), 'manage_options', 'wpfbogp', 'wpfbogp_buildpage');
-}
+	// build admin page
+	public function buildpage() {
+		load_plugin_textdomain( 'wpfbogp', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
+		?>
+		<div class="wrap">
+			<h2><?php printf( _x( 'Facebook Open Graph protocol plugin %s', 'Headline + Version', 'wpfbogp' ), '<em>v' . self::VERSION . '</em>' ) ?></h2>
+			<div id="poststuff" class="metabox-holder has-right-sidebar">
+				<div id="side-info-column" class="inner-sidebar">
+					<div class="meta-box-sortables">
+						<div id="about" class="postbox">
+							<h3 class="hndle" id="about-sidebar"><?php _e( 'About the Plugin:', 'wpfbogp' ) ?></h3>
+							<div class="inside">
+								<p><?php printf( __( 'Talk to %s on twitter or please fill out the %s for bugs or feature requests.', 'wpfbogp' ), '<a href="http://twitter.com/chuckreynolds" target="_blank">@ChuckReynolds</a>', '<a href="http://rynoweb.com/wordpress-plugins/" target="_blank">' . __( 'plugin support form', 'wpfbogp' ) . '</a>' ) ?></p>
+								<p>
+									<strong><?php _e( 'Having problems?', 'wpfbogp' ); ?></strong><br>
+									<?php printf( __( 'If you are experiencing issues with the correct information appearing on Facebook, please run the URL through the <a href="%s">Facebook debugger</a> to check for errors.', 'wpfbogp' ), 'https://developers.facebook.com/tools/debug' ); ?>
+								</p>
+								<p><strong><?php _e( 'Enjoy the plugin?', 'wpfbogp' ) ?></strong><br />
+								<?php printf( __( '%s and consider donating.', 'wpfbogp' ), '<a href="http://twitter.com/?status=I\'m using @chuckreynolds\'s WordPress Facebook Open Graph plugin - check it out! http://rynoweb.com/wordpress-plugins/" target="_blank">' . __( 'Tweet about it', 'wpfbogp' ) . '</a>' ) ?></p>
+								<p><?php _e( '<strong>Donate:</strong> A lot of hard work goes into building plugins - support your open source developers. Include your twitter username and I\'ll send you a shout out for your generosity. Thank you!', 'wpfbogp' ) ?><br />
+								<form action="https://www.paypal.com/cgi-bin/webscr" method="post">
+								<input type="hidden" name="cmd" value="_s-xclick">
+								<input type="hidden" name="hosted_button_id" value="GWGGBTBJTJMPW">
+								<input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
+								<img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
+								</form></p>
+							</div>
+						</div>
+					</div>
 
-// build admin page
-function wpfbogp_buildpage() {
-	load_plugin_textdomain( 'wpfbogp', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
-?>
+					<div class="meta-box-sortables">
+						<div id="ogp-info" class="postbox">
+							<h3 class="hndle" id="about-sidebar"><?php _e( 'Relevant Information:', 'wpfbogp' ) ?></h3>
+							<div class="inside">
+								<p><a href="http://ogp.me" target="_blank"><?php _e( 'The Open Graph Protocol', 'wpfbogp' ) ?></a><br />
+								<a href="https://developers.facebook.com/docs/opengraph/" target="_blank"><?php _e( 'Facebook Open Graph Docs', 'wpfbogp' ) ?></a><br />
+								<a href="https://developers.facebook.com/docs/insights/" target="_blank"><?php _e( 'Insights: Domain vs App vs Page', 'wpfbogp' ) ?></a><br />
+								<a href="https://developers.facebook.com/docs/reference/plugins/like/" target="_blank"><?php _e( 'How To Add a Like Button', 'wpfbogp' ) ?></a></p>
+							</div>
+						</div>
+					</div>
+				</div> <!-- // #side-info-column .inner-sidebar -->
 
-<div class="wrap">
-	<h2><?php printf(_x('Facebook Open Graph protocol plugin %s', 'Headline + Version', 'wpfbogp'), '<em>v' . WPFBOGP_VERSION . '</em>') ?></h2>
-	<div id="poststuff" class="metabox-holder has-right-sidebar">
-		<div id="side-info-column" class="inner-sidebar">
-			<div class="meta-box-sortables">
-				<div id="about" class="postbox">
-					<h3 class="hndle" id="about-sidebar"><?php _e('About the Plugin:', 'wpfbogp') ?></h3>
-					<div class="inside">
-						<p><?php printf(__('Talk to %s on twitter or please fill out the %s for bugs or feature requests.', 'wpfbogp'), '<a href="http://twitter.com/chuckreynolds" target="_blank">@ChuckReynolds</a>', '<a href="http://rynoweb.com/wordpress-plugins/" target="_blank">' . __('plugin support form', 'wpfbogp') . '</a>') ?></p>
-						<p>
-							<strong><?php _e( 'Having problems?', 'wpfbogp' ); ?></strong><br>
-							<?php printf( __( 'If you are experiencing issues with the correct information appearing on Facebook, please run the URL through the <a href="%s">Facebook debugger</a> to check for errors.', 'wpfbogp' ), 'https://developers.facebook.com/tools/debug' ); ?>
-						</p>
-						<p><strong><?php _e('Enjoy the plugin?', 'wpfbogp') ?></strong><br />
-						<?php printf(__('%s and consider donating.', 'wpfbogp'), '<a href="http://twitter.com/?status=I\'m using @chuckreynolds\'s WordPress Facebook Open Graph plugin - check it out! http://rynoweb.com/wordpress-plugins/" target="_blank">' . __('Tweet about it', 'wpfbogp') . '</a>') ?></p>
-						<p><?php _e('<strong>Donate:</strong> A lot of hard work goes into building plugins - support your open source developers. Include your twitter username and I\'ll send you a shout out for your generosity. Thank you!', 'wpfbogp') ?><br />
-						<form action="https://www.paypal.com/cgi-bin/webscr" method="post">
-						<input type="hidden" name="cmd" value="_s-xclick">
-						<input type="hidden" name="hosted_button_id" value="GWGGBTBJTJMPW">
-						<input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
-						<img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
-						</form></p>
+				<div id="post-body" class="has-sidebar">
+					<div id="post-body-content" class="has-sidebar-content">
+						<div id="normal-sortables" class="meta-box-sortables">
+							<div id="wpfbogp-options" class="postbox">
+								<div class="inside">
+
+				<form method="post" action="options.php">
+					<?php settings_fields( 'wpfbogp_options' ); ?>
+					<?php $options = get_option( 'wpfbogp' ); ?>
+
+				<table class="form-table">
+					<tr valign="top">
+						<th scope="row"><?php _e( 'Facebook User Account ID:', 'wpfbogp' ) ?></th>
+						<td><input type="text" name="wpfbogp[wpfbogp_admin_ids]" value="<?php echo $options['wpfbogp_admin_ids']; ?>" class="regular-text" /><br />
+							<?php _e( "For personal sites use your Facebook User ID here. <em>(You can enter multiple by separating each with a comma)</em>, if you want to receive Insights about the Like Buttons. The meta values will not display in your site until you've completed this box.", 'wpfbogp' ) ?><br />
+							<?php _e( '<strong>Find your ID</strong> by going to the URL like this:', 'wpfbogp' ) ?> http://graph.facebook.com/yourusername</td>
+					</tr>
+					<tr valign="top">
+						<th scope="row"><?php _e( 'Facebook Application ID:', 'wpfbogp' ) ?></th>
+						<td><input type="text" name="wpfbogp[wpfbogp_app_id]" value="<?php echo $options['wpfbogp_app_id']; ?>" class="regular-text" /><br />
+							<?php printf( __( 'For business and/or brand sites use Insights on an App ID as to not associate it with a particular person. You can use this with or without the User ID field. Create an app and use the "App ID": %s.', 'wpfbogp' ), '<a href="https://www.facebook.com/developers/apps.php" target="_blank">' . __( 'Create FB App', 'wpfbogp' ) . '</a>' ) ?></td>
+					</tr>
+					<tr valign="top">
+						<th scope="row"><?php _e( 'Default Image URL to use:', 'wpfbogp' ) ?></th>
+						<td><input type="text" name="wpfbogp[wpfbogp_fallback_img]" value="<?php echo $options['wpfbogp_fallback_img']; ?>" class="large-text" /><br />
+							<?php _e( "Full URL including http:// to the default image to use if your posts/pages don't have a featured image or an image in the content. <strong>The image is recommended to be 200px by 200px</strong>.", 'wpfbogp' ) ?><br />
+							<?php printf( __( 'You can use the WordPress %s if you wish, just copy the location of the image and put it here.', 'wpfbogp' ), '<a href="media-new.php">' . __( 'media uploader', 'wpfbogp' ) . '</a>' ) ?></td>
+					</tr>
+					<tr valign="top">
+						<th scope="row"><?php _e( 'Force Fallback Image as Default', 'wpfbogp' ) ?></th>
+						<td><input type="checkbox" name="wpfbogp[wpfbogp_force_fallback]" value="1" <?php if ( $options['wpfbogp_force_fallback'] == 1 ) echo 'checked="checked"'; ?> /> <?php _e( 'Use this if you want to use the Default Image for everything instead of looking for featured/content images.', 'wpfbogp' ) ?></label></td>
+					</tr>
+				</table>
+
+				<input type="submit" class="button-primary" value="<?php _e( 'Save Changes' ) ?>" />
+				</form>
+				<br class="clear" />
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>
-
-			<div class="meta-box-sortables">
-				<div id="ogp-info" class="postbox">
-					<h3 class="hndle" id="about-sidebar"><?php _e('Relevant Information:', 'wpfbogp') ?></h3>
-					<div class="inside">
-						<p><a href="http://ogp.me" target="_blank"><?php _e('The Open Graph Protocol', 'wpfbogp') ?></a><br />
-						<a href="https://developers.facebook.com/docs/opengraph/" target="_blank"><?php _e('Facebook Open Graph Docs', 'wpfbogp') ?></a><br />
-						<a href="https://developers.facebook.com/docs/insights/" target="_blank"><?php _e('Insights: Domain vs App vs Page', 'wpfbogp') ?></a><br />
-						<a href="https://developers.facebook.com/docs/reference/plugins/like/" target="_blank"><?php _e('How To Add a Like Button', 'wpfbogp') ?></a></p>
-					</div>
-				</div>
-			</div>
-		</div> <!-- // #side-info-column .inner-sidebar -->
-
-
-		<div id="post-body" class="has-sidebar">
-			<div id="post-body-content" class="has-sidebar-content">
-				<div id="normal-sortables" class="meta-box-sortables">
-					<div id="wpfbogp-options" class="postbox">
-						<div class="inside">
-
-		<form method="post" action="options.php">
-			<?php settings_fields('wpfbogp_options'); ?>
-			<?php $options = get_option('wpfbogp'); ?>
-
-		<table class="form-table">
-			<tr valign="top">
-				<th scope="row"><?php _e('Facebook User Account ID:', 'wpfbogp') ?></th>
-				<td><input type="text" name="wpfbogp[wpfbogp_admin_ids]" value="<?php echo $options['wpfbogp_admin_ids']; ?>" class="regular-text" /><br />
-					<?php _e("For personal sites use your Facebook User ID here. <em>(You can enter multiple by separating each with a comma)</em>, if you want to receive Insights about the Like Buttons. The meta values will not display in your site until you've completed this box.", 'wpfbogp') ?><br />
-					<?php _e('<strong>Find your ID</strong> by going to the URL like this:', 'wpfbogp') ?> http://graph.facebook.com/yourusername</td>
-			</tr>
-			<tr valign="top">
-				<th scope="row"><?php _e('Facebook Application ID:', 'wpfbogp') ?></th>
-				<td><input type="text" name="wpfbogp[wpfbogp_app_id]" value="<?php echo $options['wpfbogp_app_id']; ?>" class="regular-text" /><br />
-					<?php printf(__('For business and/or brand sites use Insights on an App ID as to not associate it with a particular person. You can use this with or without the User ID field. Create an app and use the "App ID": %s.', 'wpfbogp'), '<a href="https://www.facebook.com/developers/apps.php" target="_blank">' . __('Create FB App', 'wpfbogp') . '</a>') ?></td>
-			</tr>
-			<tr valign="top">
-				<th scope="row"><?php _e('Default Image URL to use:', 'wpfbogp') ?></th>
-				<td><input type="text" name="wpfbogp[wpfbogp_fallback_img]" value="<?php echo $options['wpfbogp_fallback_img']; ?>" class="large-text" /><br />
-					<?php _e("Full URL including http:// to the default image to use if your posts/pages don't have a featured image or an image in the content. <strong>The image is recommended to be 200px by 200px</strong>.", 'wpfbogp') ?><br />
-					<?php printf(__('You can use the WordPress %s if you wish, just copy the location of the image and put it here.', 'wpfbogp'), '<a href="media-new.php">' . __('media uploader', 'wpfbogp') . '</a>') ?></td>
-			</tr>
-			<tr valign="top">
-				<th scope="row"><?php _e('Force Fallback Image as Default', 'wpfbogp') ?></th>
-				<td><input type="checkbox" name="wpfbogp[wpfbogp_force_fallback]" value="1" <?php if ($options['wpfbogp_force_fallback'] == 1) echo 'checked="checked"'; ?> /> <?php _e('Use this if you want to use the Default Image for everything instead of looking for featured/content images.', 'wpfbogp') ?></label></td>
-			</tr>
-		</table>
-
-		<input type="submit" class="button-primary" value="<?php _e('Save Changes') ?>" />
-		</form>
-		<br class="clear" />
-					</div>
-				</div>
 			</div>
 		</div>
-	</div>
-	</div>
-</div>
-<?php
-}
-
-// sanitize inputs. accepts an array, return a sanitized array.
-function wpfbogp_validate($input) {
-	$input['wpfbogp_fallback_img'] = wp_filter_nohtml_kses($input['wpfbogp_fallback_img']);
-	$input['wpfbogp_force_fallback'] = (isset($input['wpfbogp_force_fallback']) && $input['wpfbogp_force_fallback'] == 1)  ? 1 : 0;
-
-	if ( ! preg_match( '/^[\d\s,]*$/', $input['wpfbogp_admin_ids'] ) ) {
-		add_settings_error( 'wpfbogp_options', 'invalid-admin-ids', __('You have entered invalid admin ID(s). Please check you have entered the correct IDs.', 'wpfbogp') );
-	} else {
-		$input['wpfbogp_admin_ids'] = wp_filter_nohtml_kses($input['wpfbogp_admin_ids']);
+		<?php
 	}
 
-	if ( ! preg_match( '/^\d+$/', $input['wpfbogp_app_id'] ) ) {
-		add_settings_error( 'wpfbogp_options', 'invalid-app-ids', __('You have entered an invalid application ID. Please check you have entered the correct ID.', 'wpfbogp') );
-	} else {
-		$input['wpfbogp_app_id'] = wp_filter_nohtml_kses($input['wpfbogp_app_id']);
-	}
+	// sanitize inputs. accepts an array, return a sanitized array.
+	public function validate( $input ) {
+		$input['wpfbogp_fallback_img'] = wp_filter_nohtml_kses( $input['wpfbogp_fallback_img'] );
+		$input['wpfbogp_force_fallback'] = ( isset( $input['wpfbogp_force_fallback'] ) && $input['wpfbogp_force_fallback'] == 1 )  ? 1 : 0;
 
-	return $input;
-}
-
-// run admin notices on activation or if settings not set
-function wpfbogp_admin_warnings() {
-	load_plugin_textdomain( 'wpfbogp', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
-	global $wpfbogp_admins;
-		$wpfbogp_data = get_option('wpfbogp');
-	if ((empty($wpfbogp_data['wpfbogp_admin_ids']) || $wpfbogp_data['wpfbogp_admin_ids'] == '') && (empty($wpfbogp_data['wpfbogp_app_id']) || $wpfbogp_data['wpfbogp_app_id'] == '')) {
-		function wpfbogp_warning() {
-			echo "<div id='wpfbogp-warning' class='updated fade'><p><strong>" . __('WP FB OGP is almost ready.', 'wpfbogp') . "</strong> " . sprintf(__('You must %s for it to work.', 'wpfbogp'), '<a href="options-general.php?page=wpfbogp">' . __('enter your Facebook User ID or App ID', 'wpfbogp') . '</a>') . "</p></div>";
+		if ( ! empty( $input['wpfbogp_admin_ids'] ) AND ! preg_match( '/^[\d\s,]*$/', $input['wpfbogp_admin_ids'] ) ) {
+			add_settings_error( 'wpfbogp_options', 'invalid-admin-ids', __( 'You have entered invalid admin ID(s). Please check you have entered the correct IDs.', 'wpfbogp' ) );
+		} else {
+			$input['wpfbogp_admin_ids'] = wp_filter_nohtml_kses( $input['wpfbogp_admin_ids'] );
 		}
-	add_action('admin_notices', 'wpfbogp_warning');
+
+		if ( ! empty( $input['wpfbogp_app_id'] ) AND ! preg_match( '/^\d+$/', $input['wpfbogp_app_id'] ) ) {
+			add_settings_error( 'wpfbogp_options', 'invalid-app-ids', __( 'You have entered an invalid application ID. Please check you have entered the correct ID.', 'wpfbogp' ) );
+		} else {
+			$input['wpfbogp_app_id'] = wp_filter_nohtml_kses( $input['wpfbogp_app_id'] );
+		}
+
+		return $input;
 	}
-}
 
-// twentyten and twentyeleven add crap to the excerpt so lets check for that and remove
-add_action('after_setup_theme','wpfbogp_fix_excerpts_exist');
-function wpfbogp_fix_excerpts_exist() {
-	remove_filter('get_the_excerpt','twentyten_custom_excerpt_more');
-	remove_filter('get_the_excerpt','twentyeleven_custom_excerpt_more');
-}
-
-// add settings link to plugins list
-function wpfbogp_add_settings_link($links, $file) {
-	static $this_plugin;
-	if (!$this_plugin) $this_plugin = plugin_basename(__FILE__);
-	if ($file == $this_plugin){
-		$settings_link = '<a href="options-general.php?page=wpfbogp">'. __('Settings', 'wpfbogp') . '</a>';
-		array_unshift($links, $settings_link);
+	// run admin notices on activation or if settings not set
+	public function admin_warnings() {
+		load_plugin_textdomain( 'wpfbogp', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
+		global $wpfbogp_admins;
+		$wpfbogp_data = get_option( 'wpfbogp' );
+		if ( ( empty( $wpfbogp_data['wpfbogp_admin_ids'] ) || $wpfbogp_data['wpfbogp_admin_ids'] == '' ) && ( empty( $wpfbogp_data['wpfbogp_app_id'] ) || $wpfbogp_data['wpfbogp_app_id'] == '' ) ) {
+			add_action( 'admin_notices', array( $this, 'almost_ready' ) );
+		}
 	}
-	return $links;
-}
-add_filter('plugin_action_links','wpfbogp_add_settings_link', 10, 2 );
 
-function wpfbogp_admin_bar_link() {
-	global $wp_admin_bar, $wpdb, $wp;
-
-	if ( is_admin() || ! is_super_admin() || ! is_admin_bar_showing() )
-		return;
-
-	$current_url = add_query_arg( $wp->query_string, '', home_url( $wp->request ) );
-	$wp_admin_bar->add_menu( array( 'id' => 'wpfbogp_debug', 'title' => __( 'OGP Debug', 'wpfbogp' ), 'href' => 'https://developers.facebook.com/tools/debug?q='.$current_url ) );
-}
-add_action( 'admin_bar_menu', 'wpfbogp_admin_bar_link', 1000 );
-
-// lets offer an actual clean uninstall and rem db row on uninstall
-if (function_exists('register_uninstall_hook')) {
-	register_uninstall_hook(__FILE__, 'wpfbogp_uninstall_hook');
-	function wpfbogp_uninstall_hook() {
-		delete_option('wpfbogp');
+	public function almost_ready() {
+		echo "<div id='wpfbogp-warning' class='updated fade'><p><strong>" . __( 'WP FB OGP is almost ready.', 'wpfbogp' ) . "</strong> " . sprintf( __( 'You must %s for it to work.', 'wpfbogp' ), '<a href="options-general.php?page=wpfbogp">' . __( 'enter your Facebook User ID or App ID', 'wpfbogp' ) . '</a>' ) . "</p></div>";
 	}
+
+	// twentyten and twentyeleven add crap to the excerpt so lets check for that and remove
+	public function fix_excerpts_exist() {
+		remove_filter( 'get_the_excerpt', 'twentyten_custom_excerpt_more' );
+		remove_filter( 'get_the_excerpt', 'twentyeleven_custom_excerpt_more' );
+	}
+
+	// add settings link to plugins list
+	public function add_settings_link( $links, $file ) {
+		static $this_plugin;
+		if ( !$this_plugin ) $this_plugin = plugin_basename( __FILE__ );
+		if ( $file == $this_plugin ) {
+			$settings_link = '<a href="options-general.php?page=wpfbogp">'. __( 'Settings', 'wpfbogp' ) . '</a>';
+			array_unshift( $links, $settings_link );
+		}
+		return $links;
+	}
+
+	public function admin_bar_link() {
+		global $wp_admin_bar, $wpdb, $wp;
+
+		if ( is_admin() || ! is_super_admin() || ! is_admin_bar_showing() )
+			return;
+
+		$current_url = add_query_arg( $wp->query_string, '', home_url( $wp->request ) );
+		$wp_admin_bar->add_menu( array( 'id' => 'wpfbogp_debug', 'title' => __( 'OGP Debug', 'wpfbogp' ), 'href' => 'https://developers.facebook.com/tools/debug?q='.$current_url ) );
+	}
+
 }
+
+$wpfbogp = new WPFBOGP;
