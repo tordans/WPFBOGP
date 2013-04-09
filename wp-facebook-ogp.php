@@ -94,6 +94,57 @@ class WPFBOGP {
 		return $images;
 	}
 
+	/**
+	 * Parses the output for the title or falls back to some sensible defaults.
+	 *
+	 * @param  string $content
+	 * @return string
+	 */
+	public function get_title( $content ) {
+		global $post;
+
+		$title = preg_match( '/<title>(.*)<\/title>/', $content, $title_matches );
+		if ( $title !== FALSE && count( $title_matches ) == 2 ) {
+			$title = $title_matches[1];
+		} elseif ( is_home() || is_front_page() ) {
+			$title = get_bloginfo( 'name' );
+		} else {
+			$title = the_title_attribute( 'echo=0' );
+		}
+
+		return $title;
+	}
+
+	/**
+	 * Parses the output for the description for falls back to some sensible
+	 * defaults.
+	 *
+	 * @param  string $content
+	 * @return string
+	 */
+	public function get_description( $content ) {
+		global $post;
+
+		$description = preg_match( '/<meta name="description" content="(.*)"/', $content, $description_matches );
+		if ( $description !== FALSE && count( $description_matches ) == 2 ) {
+			echo '1';
+			$description = $description_matches[1];
+		} elseif ( is_singular() ) {
+			// Use any custom exceprt before simply truncating the content,
+			// but ignore the front page.
+			if ( has_excerpt( $post->ID ) ) {
+				$description = strip_tags( get_the_excerpt( $post->ID ) );
+			} else {
+				$description = str_replace( "\r\n", ' ' , substr( strip_tags( strip_shortcodes( $post->post_content ) ), 0, 160 ) );
+			}
+		} else {
+			// Default to the blog description
+			$description = get_bloginfo( 'description' );
+		}
+
+		return $description;
+	}
+
 	// build ogp meta
 	public function build_head() {
 		global $post;
@@ -143,37 +194,15 @@ class WPFBOGP {
 			// First we will attempt to match the content of the <title> tags,
 			// to capture any changes that were done by an SEO plugin. If that
 			// fails, then we fall back to the blog name or the post name.
-			$title = preg_match( '/<title>(.*)<\/title>/', $content, $title_matches );
-			if ( $title !== FALSE && count( $title_matches ) == 2 ) {
-				$title = $title_matches[1];
-			} elseif ( is_home() || is_front_page() ) {
-				$title = get_bloginfo( 'name' );
-			} else {
-				$title = the_title_attribute( 'echo=0' );
-			}
+			$title = $this->get_title( $content );
 			echo '<meta property="og:title" content="' . esc_attr( apply_filters( 'wpfbogp_title', $title ) ) . '" />' . "\n";
 
-			// do additional randoms
-			echo '<meta property="og:site_name" content="' . esc_attr( get_bloginfo( 'name' ) ) . '" />' . "\n";
+			// Site title
+			echo '<meta property="og:site_name" content="' . esc_attr( apply_filters( 'wpfbogp_site_name', get_bloginfo( 'name' ) ) ) . '" />' . "\n";
 
 			// We follow the same flow as titles, where we try to match any
 			// existing description before moving onto the fallbacks.
-			$description = preg_match( '/<meta name="description" content="(.*)"/', $content, $description_matches );
-			if ( $description !== FALSE && count( $description_matches ) == 2 ) {
-				echo '1';
-				$description = $description_matches[1];
-			} elseif ( is_singular() ) {
-				// Use any custom exceprt before simply truncating the content,
-				// but ignore the front page.
-				if ( has_excerpt( $post->ID ) ) {
-					$description = strip_tags( get_the_excerpt( $post->ID ) );
-				} else {
-					$description = str_replace( "\r\n", ' ' , substr( strip_tags( strip_shortcodes( $post->post_content ) ), 0, 160 ) );
-				}
-			} else {
-				// Default to the blog description
-				$description = get_bloginfo( 'description' );
-			}
+			$description = $this->get_description( $content );
 			echo '<meta property="og:description" content="' . esc_attr( apply_filters( 'wpfbogp_description', $description ) ) . '" />' . "\n";
 
 			// do ogp type
