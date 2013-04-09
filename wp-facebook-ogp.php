@@ -187,11 +187,11 @@ class WPFBOGP {
 
 		// do url stuff
 		if ( is_home() || is_front_page() ) {
-			$wpfbogp_url = get_bloginfo( 'url' );
+			$url = get_bloginfo( 'url' );
 		} else {
-			$wpfbogp_url = 'http' . ( is_ssl() ? 's' : '' ) . "://".$_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+			$url = 'http' . ( is_ssl() ? 's' : '' ) . "://".$_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
 		}
-		echo '<meta property="og:url" content="' . esc_url( apply_filters( 'wpfbogp_url', $wpfbogp_url ) ) . '" />' . "\n";
+		echo '<meta property="og:url" content="' . esc_url( apply_filters( 'wpfbogp_url', $url ) ) . '" />' . "\n";
 
 		// First we will attempt to match the content of the <title> tags,
 		// to capture any changes that were done by an SEO plugin. If that
