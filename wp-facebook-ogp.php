@@ -47,18 +47,20 @@ class WPFBOGP {
 		remove_action( 'wp_head', array( $this, 'jetpack_og_tags' ) );
 
 		add_filter( 'language_attributes', array( $this, 'ogpprefix' ) );
-		add_action( 'init', array( $this, 'start_ob' ), 0 );
 
-		// Fire after other plugins (which default to priority 10)
-		add_action( 'wp_footer', array( $this, 'flush_ob' ), 10000 );
+		add_action( 'init', array( $this, 'buffer' ), 0 );
+		add_action( 'wp_head', array( $this, 'build_head' ), 9999 );
 
-		add_action( 'wp_head', array( $this, 'build_head' ), 50 );
 		add_action( 'admin_init', array( $this, 'init' ) );
 		add_action( 'admin_menu', array( $this, 'add_page' ) );
 
 		add_action( 'after_setup_theme', array( $this, 'fix_excerpts_exist' ) );
 		add_filter( 'plugin_action_links', array( $this, 'add_settings_link' ), 10, 2 );
 		add_action( 'admin_bar_menu', array( $this, 'admin_bar_link' ), 1000 );
+	}
+
+	public function buffer() {
+		ob_start();
 	}
 
 	// add OGP namespace per ogp.me schema
@@ -92,36 +94,18 @@ class WPFBOGP {
 		return $images;
 	}
 
-	public function start_ob() {
-		// Start the buffer before any output
-		ob_start( array( $this, 'callback' ) );
-	}
-
-	public function callback( $content ) {
-		// Grab the page title and meta description
-		$title = preg_match( '/<title>(.*)<\/title>/', $content, $title_matches );
-		$description = preg_match( '/<meta name="description" content="(.*)"/', $content, $description_matches );
-
-		// Take page title and meta description and place it in the ogp meta tags
-		if ( $title !== FALSE && count( $title_matches ) == 2 ) {
-			$content = preg_replace( '/<meta property="og:title" content="(.*)"\/>/', '<meta property="og:title" content="' . $title_matches[1] . '"/>', $content );
-		}
-
-		if ( $description !== FALSE && count( $description_matches ) == 2 ) {
-			$content = preg_replace( '/<meta property="og:description" content="(.*)"\/>/', '<meta property="og:description" content="' . $description_matches[1] . '"/>', $content );
-		}
-
-		return $content;
-	}
-
-	public function flush_ob() {
-		ob_end_flush();
-	}
-
 	// build ogp meta
 	public function build_head() {
 		global $post;
 		$options = get_option( 'wpfbogp' );
+
+		// Get the output buffer contents, which will include all previous
+		// output before our plugin is called (hopefully last in the stack).
+		$content = ob_get_contents();
+
+		// Immediately flush the buffer so no output is lost.
+		ob_end_flush();
+
 		// check to see if you've filled out one of the required fields and announce if not
 		if ( ( ! isset( $options['wpfbogp_admin_ids'] ) || empty( $options['wpfbogp_admin_ids'] ) ) && ( ! isset( $options['wpfbogp_app_id'] ) || empty( $options['wpfbogp_app_id'] ) ) ) {
 			echo "\n<!-- Facebook Open Graph protocol plugin NEEDS an admin or app ID to work, please visit the plugin settings page! -->\n";
@@ -130,10 +114,10 @@ class WPFBOGP {
 
 			// do fb verification fields
 			if ( isset( $options['wpfbogp_admin_ids'] ) && ! empty( $options['wpfbogp_admin_ids'] ) ) {
-				echo '<meta property="fb:admins" content="' . esc_attr( apply_filters( 'wpfbogp_app_id', $options['wpfbogp_admin_ids'] ) ) . '"/>' . "\n";
+				echo '<meta property="fb:admins" content="' . esc_attr( apply_filters( 'wpfbogp_app_id', $options['wpfbogp_admin_ids'] ) ) . '" />' . "\n";
 			}
 			if ( isset( $options['wpfbogp_app_id'] ) && ! empty( $options['wpfbogp_app_id'] ) ) {
-				echo '<meta property="fb:app_id" content="' . esc_attr( apply_filters( 'wpfbogp_app_id', $options['wpfbogp_app_id'] ) ) . '"/>' . "\n";
+				echo '<meta property="fb:app_id" content="' . esc_attr( apply_filters( 'wpfbogp_app_id', $options['wpfbogp_app_id'] ) ) . '" />' . "\n";
 			}
 
 			// do url stuff
@@ -142,31 +126,43 @@ class WPFBOGP {
 			} else {
 				$wpfbogp_url = 'http' . ( is_ssl() ? 's' : '' ) . "://".$_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
 			}
-			echo '<meta property="og:url" content="' . esc_url( apply_filters( 'wpfbogp_url', $wpfbogp_url ) ) . '"/>' . "\n";
+			echo '<meta property="og:url" content="' . esc_url( apply_filters( 'wpfbogp_url', $wpfbogp_url ) ) . '" />' . "\n";
 
-			// do title stuff
-			if ( is_home() || is_front_page() ) {
-				$wpfbogp_title = get_bloginfo( 'name' );
+			// First we will attempt to match the content of the <title> tags,
+			// to capture any changes that were done by an SEO plugin. If that
+			// fails, then we fall back to the blog name or the post name.
+			$title = preg_match( '/<title>(.*)<\/title>/', $content, $title_matches );
+			if ( $title !== FALSE && count( $title_matches ) == 2 ) {
+				$title = $title_matches[1];
+			} elseif ( is_home() || is_front_page() ) {
+				$title = get_bloginfo( 'name' );
 			} else {
-				//$wpfbogp_title = get_the_title();
-				$wpfbogp_title = the_title_attribute( 'echo=0' );
+				$title = the_title_attribute( 'echo=0' );
 			}
-			echo '<meta property="og:title" content="' . esc_attr( apply_filters( 'wpfbogp_title', $wpfbogp_title ) ) . '"/>' . "\n";
+			echo '<meta property="og:title" content="' . esc_attr( apply_filters( 'wpfbogp_title', $title ) ) . '" />' . "\n";
 
 			// do additional randoms
-			echo '<meta property="og:site_name" content="' . esc_attr( get_bloginfo( 'name' ) ) . '"/>' . "\n";
+			echo '<meta property="og:site_name" content="' . esc_attr( get_bloginfo( 'name' ) ) . '" />' . "\n";
 
-			// do descriptions
-			if ( is_singular() ) {
+			// We follow the same flow as titles, where we try to match any
+			// existing description before moving onto the fallbacks.
+			$description = preg_match( '/<meta name="description" content="(.*)"/', $content, $description_matches );
+			if ( $description !== FALSE && count( $description_matches ) == 2 ) {
+				echo '1';
+				$description = $description_matches[1];
+			} elseif ( is_singular() ) {
+				// Use any custom exceprt before simply truncating the content,
+				// but ignore the front page.
 				if ( has_excerpt( $post->ID ) ) {
-					$wpfbogp_description = strip_tags( get_the_excerpt( $post->ID ) );
+					$description = strip_tags( get_the_excerpt( $post->ID ) );
 				} else {
-					$wpfbogp_description = str_replace( "\r\n", ' ' , substr( strip_tags( strip_shortcodes( $post->post_content ) ), 0, 160 ) );
+					$description = str_replace( "\r\n", ' ' , substr( strip_tags( strip_shortcodes( $post->post_content ) ), 0, 160 ) );
 				}
 			} else {
-				$wpfbogp_description = get_bloginfo( 'description' );
+				// Default to the blog description
+				$description = get_bloginfo( 'description' );
 			}
-			echo '<meta property="og:description" content="' . esc_attr( apply_filters( 'wpfbogp_description', $wpfbogp_description ) ) . '"/>' . "\n";
+			echo '<meta property="og:description" content="' . esc_attr( apply_filters( 'wpfbogp_description', $description ) ) . '" />' . "\n";
 
 			// do ogp type
 			if ( is_single() ) {
@@ -174,14 +170,14 @@ class WPFBOGP {
 			} else {
 				$wpfbogp_type = 'website';
 			}
-			echo '<meta property="og:type" content="' . esc_attr( apply_filters( 'wpfbpogp_type', $wpfbogp_type ) ) . '"/>' . "\n";
+			echo '<meta property="og:type" content="' . esc_attr( apply_filters( 'wpfbpogp_type', $wpfbogp_type ) ) . '" />' . "\n";
 
 			// Find/output any images for use in the OGP tags
 			$wpfbogp_images = array();
 
 			// First check for a fallback image
 			if ( isset( $options['wpfbogp_fallback_img'] ) && $options['wpfbogp_fallback_img'] != '' ) {
-				$fallback = '<meta property="og:image" content="' . esc_url( apply_filters( 'wpfbogp_image', $options['wpfbogp_fallback_img'] ) ) . '"/>' . "\n";
+				$fallback = '<meta property="og:image" content="' . esc_url( apply_filters( 'wpfbogp_image', $options['wpfbogp_fallback_img'] ) ) . '" />' . "\n";
 			} else {
 				$fallback = false;
 			}
@@ -208,7 +204,7 @@ class WPFBOGP {
 				// Make sure there were images passed as an array and loop through/output each
 				if ( ! empty( $wpfbogp_images ) && is_array( $wpfbogp_images ) ) {
 					foreach ( $wpfbogp_images as $image ) {
-						echo '<meta property="og:image" content="' . esc_url( apply_filters( 'wpfbogp_image', $image ) ) . '"/>' . "\n";
+						echo '<meta property="og:image" content="' . esc_url( apply_filters( 'wpfbogp_image', $image ) ) . '" />' . "\n";
 					}
 				}
 			}
@@ -219,7 +215,7 @@ class WPFBOGP {
 			}
 
 			// do locale // make lower case cause facebook freaks out and shits parser mismatched metadata warning
-			echo '<meta property="og:locale" content="' . strtolower( esc_attr( get_locale() ) ) . '"/>' . "\n";
+			echo '<meta property="og:locale" content="' . strtolower( esc_attr( get_locale() ) ) . '" />' . "\n";
 			echo "<!-- // end wpfbogp -->\n";
 		}
 	}
