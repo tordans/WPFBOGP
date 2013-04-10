@@ -5,6 +5,8 @@
 [GitHub-Repository](https://github.com/chuckreynolds/WPFBOGP) |
 [Issue-Tracker](https://github.com/chuckreynolds/WPFBOGP/issues)
 
+[![Build Status](https://travis-ci.org/chuckreynolds/WPFBOGP.png?branch=master)](https://travis-ci.org/chuckreynolds/WPFBOGP)
+
 ### WordPress
 * Requires at least: 3.0
 * Tested up to: 3.5x
