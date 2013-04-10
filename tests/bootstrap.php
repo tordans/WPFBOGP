@@ -3,7 +3,7 @@
 require_once getenv( 'WP_TESTS_DIR' ) . '/includes/functions.php';
 
 function _manually_load_plugin() {
-	require dirname( __FILE__ ) . '/../WPFBOGP.php';
+	require dirname( __FILE__ ) . '/../wp-facebook-ogp.php';
 }
 tests_add_filter( 'muplugins_loaded', '_manually_load_plugin' );
 
