@@ -135,7 +135,7 @@ class WPFBOGP {
 		if ( $description !== FALSE && count( $description_matches ) == 2 ) {
 			$description = $description_matches[1];
 		} elseif ( is_singular() ) {
-			// Use any custom exceprt before simply truncating the content,
+			// Use any custom excerpt before simply truncating the content,
 			// but ignore the front page.
 			if ( has_excerpt( $post->ID ) ) {
 				$description = strip_tags( get_the_excerpt( $post->ID ) );
