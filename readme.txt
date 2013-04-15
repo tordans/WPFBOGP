@@ -4,7 +4,7 @@ Donate link: http://goo.gl/8lGv3
 Tags: open graph, ogp, facebook open graph, google +1, +1, google plus one, plus one, linkedin share, facebook meta, open graph meta, facebook share, facebook like, linkedin
 Requires at least: 3.0
 Tested up to: 3.6
-Stable tag: 2.1
+Stable tag: 2.0.7
 License: GPL v3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
