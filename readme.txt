@@ -98,6 +98,7 @@ Because we're getting more accurate titles you may see a change in how they're p
 * one fb:admin per meta tag now. Facebook decided having multiple in one field is no longer cool
 * added og:type blog for when on main blog page instead of wrapping that as type website
 * lot of code cleanup and better organization
+* change how og:url permalink is pulled to work around servers not adding trailing slashes
 
 = 2.0.7 =
 * fixes bug with certain plugins not showing description tags properly
