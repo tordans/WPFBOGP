@@ -237,6 +237,9 @@ class WPFBOGP {
 		}
 		echo '<meta property="og:type" content="' . esc_attr( apply_filters( 'wpfbpogp_type', $type ) ) . '" />' . "\n";
 
+		// staging facebook page url for like on ogp embeds
+		//echo '<meta property="article:publisher" content="' . esc_attr( apply_filters( 'wpfbpogp_fbpageurl', $fbpageurl ) ) . '" />' . "\n";
+
 		// Find/output any images for use in the OGP tags
 		$wpfbogp_images = array();
 
@@ -330,7 +333,7 @@ class WPFBOGP {
 								</p>
 
 								<p><strong><?php _e( 'Enjoy the plugin?', 'wpfbogp' ) ?></strong><br />
-								<?php printf( __( '%s and consider donating.', 'wpfbogp' ), '<a href="http://twitter.com/?status=I\'m using the #WordPress Facebook Open Graph plugin by @chuckreynolds - check it out! http://rynoweb.com/wordpress-plugins/" target="_blank">' . __( 'Tweet about it', 'wpfbogp' ) . '</a>' ) ?></p>
+								<?php printf( __( '%s and consider donating.', 'wpfbogp' ), '<a href="http://twitter.com/?status=I\'m using the WordPress Facebook Open Graph plugin by @chuckreynolds - check it out! http://wordpress.org/support/plugin/wp-facebook-open-graph-protocol" target="_blank">' . __( 'Tweet about it', 'wpfbogp' ) . '</a>' ) ?></p>
 
 								<p><strong><?php _e( 'Support Us', 'wpfbogp' ) ?></strong><br />
 									<?php _e( 'A lot of hard work goes into building plugins - support your open source developers. Include your twitter username and I\'ll send you a shout out for your generosity. Thank you!', 'wpfbogp' ) ?><br />
