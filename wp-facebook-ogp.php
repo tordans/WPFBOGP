@@ -322,14 +322,18 @@ class WPFBOGP {
 						<div id="about" class="postbox">
 							<h3 class="hndle" id="about-sidebar"><?php _e( 'About the Plugin:', 'wpfbogp' ) ?></h3>
 							<div class="inside">
-								<p><?php printf( __( 'Talk to %s on twitter or please fill out the %s for bugs or feature requests.', 'wpfbogp' ), '<a href="http://twitter.com/chuckreynolds" target="_blank">@ChuckReynolds</a>', '<a href="http://rynoweb.com/wordpress-plugins/" target="_blank">' . __( 'plugin support form', 'wpfbogp' ) . '</a>' ) ?></p>
-								<p>
-									<strong><?php _e( 'Having problems?', 'wpfbogp' ); ?></strong><br>
-									<?php printf( __( 'If you are experiencing issues with the correct information appearing on Facebook, please run the URL through the <a href="%s">Facebook debugger</a> to check for errors.', 'wpfbogp' ), 'https://developers.facebook.com/tools/debug' ); ?>
+								<p><strong><?php _e( 'Having problems?', 'wpfbogp' ); ?></strong><br>
+									<?php _e( 'If you are experiencing issues with the correct information appearing on Facebook, please follow these steps:', 'wpfbogp' ); ?><br>
+									<?php _e( '1. View-Source to see if there is another plugin adding in additional og: tags.', 'wpfbogp' ); ?><br>
+									<?php printf( __( '2. Run the URL through the <a href="%s">Facebook Debugger</a> to check for errors.', 'wpfbogp' ), 'https://developers.facebook.com/tools/debug' ); ?><br>
+									<?php printf( __( '3. If none of those fixed your problem then feel free to start/join a thread on the <a href="%s">Support Forums</a>.', 'wpfbogp' ), 'https://developers.facebook.com/tools/debug' ); ?>
 								</p>
+
 								<p><strong><?php _e( 'Enjoy the plugin?', 'wpfbogp' ) ?></strong><br />
-								<?php printf( __( '%s and consider donating.', 'wpfbogp' ), '<a href="http://twitter.com/?status=I\'m using @chuckreynolds\'s WordPress Facebook Open Graph plugin - check it out! http://rynoweb.com/wordpress-plugins/" target="_blank">' . __( 'Tweet about it', 'wpfbogp' ) . '</a>' ) ?></p>
-								<p><?php _e( '<strong>Donate:</strong> A lot of hard work goes into building plugins - support your open source developers. Include your twitter username and I\'ll send you a shout out for your generosity. Thank you!', 'wpfbogp' ) ?><br />
+								<?php printf( __( '%s and consider donating.', 'wpfbogp' ), '<a href="http://twitter.com/?status=I\'m using the #WordPress Facebook Open Graph plugin by @chuckreynolds - check it out! http://rynoweb.com/wordpress-plugins/" target="_blank">' . __( 'Tweet about it', 'wpfbogp' ) . '</a>' ) ?></p>
+
+								<p><strong><?php _e( 'Support Us', 'wpfbogp' ) ?></strong><br />
+									<?php _e( 'A lot of hard work goes into building plugins - support your open source developers. Include your twitter username and I\'ll send you a shout out for your generosity. Thank you!', 'wpfbogp' ) ?><br />
 								<form action="https://www.paypal.com/cgi-bin/webscr" method="post">
 								<input type="hidden" name="cmd" value="_s-xclick">
 								<input type="hidden" name="hosted_button_id" value="GWGGBTBJTJMPW">
