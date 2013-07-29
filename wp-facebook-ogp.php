@@ -235,10 +235,12 @@ class WPFBOGP {
 		} else {
 			$type = 'website';
 		}
-		echo '<meta property="og:type" content="' . esc_attr( apply_filters( 'wpfbpogp_type', $type ) ) . '" />' . "\n";
+		echo '<meta property="og:type" content="' . esc_attr( apply_filters( 'wpfbogp_type', $type ) ) . '" />' . "\n";
 
 		// staging facebook page url for like on ogp embeds
-		//echo '<meta property="article:publisher" content="' . esc_attr( apply_filters( 'wpfbpogp_fbpageurl', $fbpageurl ) ) . '" />' . "\n";
+		if ( isset( $options['wpfbogp_fbpageurl'] ) && ! empty( $options['wpfbogp_fbpageurl'] ) ) {
+		echo '<meta property="article:publisher" content="' . esc_attr( apply_filters( 'wpfbogp_fbpageurl', $options['wpfbogp_fbpageurl'] ) ) . '" />' . "\n";
+		}
 
 		// Find/output any images for use in the OGP tags
 		$wpfbogp_images = array();
@@ -373,31 +375,37 @@ class WPFBOGP {
 				<table class="form-table">
 					<? /*<tr valgin="top">
 						<td rowspan="2">
-							<?php _e( '', 'wpfbogp' ) ?>
+							<p><?php _e( '', 'wpfbogp' ) ?></p>
 						</td>
 					</tr>
 					*/ ?>
 					<tr valign="top">
 						<th scope="row"><?php _e( 'Facebook User Account ID:', 'wpfbogp' ) ?></th>
-						<td><input type="text" name="wpfbogp[wpfbogp_admin_ids]" value="<?php echo $options['wpfbogp_admin_ids']; ?>" class="regular-text" /><br />
-							<?php _e( "Option 1: For personal sites use your Facebook User ID here. <em>(You can enter multiple by separating each with a comma)</em>. Note: this is a number, not your name or url.", 'wpfbogp' ) ?><br>
-							<?php _e( '<strong>Find your ID</strong> by going to the URL like this: http://graph.facebook.com/{yourusername}', 'wpfbogp' ) ?><br>
+						<td><input type="text" name="wpfbogp[wpfbogp_admin_ids]" value="<?php echo $options['wpfbogp_admin_ids']; ?>" class="regular-text" />
+							<p class="description"><?php _e( "Option 1: For personal sites use your Facebook User ID here. <em>(You can enter multiple by separating each with a comma)</em>. Note: this is a number, not your name or url.", 'wpfbogp' ) ?><br>
+							<?php _e( '<strong>Find your ID</strong> by going to the URL like this: http://graph.facebook.com/{yourusername}', 'wpfbogp' ) ?></p>
 						</td>
 					</tr>
 					<tr valign="top">
 						<th scope="row"><?php _e( 'Facebook Application ID:', 'wpfbogp' ) ?></th>
-						<td><input type="text" name="wpfbogp[wpfbogp_app_id]" value="<?php echo $options['wpfbogp_app_id']; ?>" class="regular-text" /><br>
-							<?php printf( __( 'Option 2: For business/brand sites use this field for your APPlication ID (not page id) with or without the User ID field above. Create an app or edit a previous one to get the "App ID": %s.', 'wpfbogp' ), '<a href="https://developers.facebook.com/apps" target="_blank">' . __( 'Facebook Apps', 'wpfbogp' ) . '</a>' ) ?></td>
+						<td><input type="text" name="wpfbogp[wpfbogp_app_id]" value="<?php echo $options['wpfbogp_app_id']; ?>" class="regular-text" />
+							<p class="description"><?php printf( __( 'Option 2: For business/brand sites use this field for your APPlication ID (not page id) with or without the User ID field above. Create an app or edit a previous one to get the "App ID": %s.', 'wpfbogp' ), '<a href="https://developers.facebook.com/apps" target="_blank">' . __( 'Facebook Apps', 'wpfbogp' ) . '</a>' ) ?></p></td>
 					</tr>
 					<tr valign="top">
 						<th scope="row"><?php _e( 'Default Image URL to use:', 'wpfbogp' ) ?></th>
-						<td><input type="text" name="wpfbogp[wpfbogp_fallback_img]" value="<?php echo $options['wpfbogp_fallback_img']; ?>" class="large-text" /><br>
-							<?php _e( "Full URL including http:// to the default image to use if your home/posts/pages don't have a featured image or an image in the content. <strong>The image is recommended to be at least  200px by 200px</strong>.", 'wpfbogp' ) ?><br>
-							<?php printf( __( 'You can use the WordPress %s if you wish, just copy the location of the image and put it here.', 'wpfbogp' ), '<a href="media-new.php">' . __( 'media uploader', 'wpfbogp' ) . '</a>' ) ?></td>
+						<td><input type="text" name="wpfbogp[wpfbogp_fallback_img]" value="<?php echo $options['wpfbogp_fallback_img']; ?>" class="large-text" />
+							<p class="description"><?php _e( "Full URL including http:// to the default image to use if your home/posts/pages don't have a featured image or an image in the content. <strong>The image is recommended to be at least  200px by 200px</strong>.", 'wpfbogp' ) ?><br>
+							<?php printf( __( 'You can use the WordPress %s if you wish, just copy the location of the image and put it here.', 'wpfbogp' ), '<a href="media-new.php">' . __( 'media uploader', 'wpfbogp' ) . '</a>' ) ?></p></td>
 					</tr>
 					<tr valign="top">
 						<th scope="row"><?php _e( 'Force Fallback Image as Default', 'wpfbogp' ) ?></th>
-						<td><input type="checkbox" name="wpfbogp[wpfbogp_force_fallback]" value="1" <?php if ( $options['wpfbogp_force_fallback'] == 1 ) echo 'checked="checked"'; ?> /> <?php _e( 'Check this if you want to use the Default Image above for everything instead of looking for featured/content images.', 'wpfbogp' ) ?></label></td>
+						<td><input type="checkbox" name="wpfbogp[wpfbogp_force_fallback]" value="1" <?php if ( $options['wpfbogp_force_fallback'] == 1 ) echo 'checked="checked"'; ?> />
+							<p class="description"><?php _e( 'Check this if you want to use the Default Image above for everything instead of looking for featured/content images.', 'wpfbogp' ) ?></p></td>
+					</tr>
+					<tr valign="top">
+						<th scope="row"><?php _e( 'Publishing FB Page', 'wpfbogp' ) ?></th>
+						<td><input type="text" name="wpfbogp[wpfbogp_fbpageurl]" value="<?php if (isset($options['wpfbogp_fbpageurl'])) { echo $options['wpfbogp_fbpageurl']; } ?>" class="large-text" />
+							<p class="description"><?php _e( 'A Facebook page URL or ID of the publishing entity. If this is filled out Facebook will add a Like button under your article when displayed on the timeline.', 'wpfbogp' ) ?></p></td>
 					</tr>
 				</table>
 

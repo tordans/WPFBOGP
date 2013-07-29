@@ -95,6 +95,7 @@ Because we're getting more accurate titles you may see a change in how they're p
 == Changelog ==
 = 2.1 =
 * added a link to test current page in Facebook Debugger via the Admin bar. #USEFUL!
+* added article:publisher option to enable like button on timeline for publishing page
 * translation support, German translation
 * change media link in admin to media-new.php from base media library list
 * change sort so default image shows up first when other images set
