@@ -368,26 +368,33 @@ class WPFBOGP {
 					<?php $options = get_option( 'wpfbogp' ); ?>
 
 				<table class="form-table">
+					<? /*<tr valgin="top">
+						<td rowspan="2">
+							<?php _e( '', 'wpfbogp' ) ?>
+						</td>
+					</tr>
+					*/ ?>
 					<tr valign="top">
 						<th scope="row"><?php _e( 'Facebook User Account ID:', 'wpfbogp' ) ?></th>
 						<td><input type="text" name="wpfbogp[wpfbogp_admin_ids]" value="<?php echo $options['wpfbogp_admin_ids']; ?>" class="regular-text" /><br />
-							<?php _e( "For personal sites use your Facebook User ID here. <em>(You can enter multiple by separating each with a comma)</em>, if you want to receive Insights about the Like Buttons. The meta values will not display in your site until you've completed this box.", 'wpfbogp' ) ?><br />
-							<?php _e( '<strong>Find your ID</strong> by going to the URL like this:', 'wpfbogp' ) ?> http://graph.facebook.com/yourusername</td>
+							<?php _e( "Option 1: For personal sites use your Facebook User ID here. <em>(You can enter multiple by separating each with a comma)</em>. Note: this is a number, not your name or url.", 'wpfbogp' ) ?><br>
+							<?php _e( '<strong>Find your ID</strong> by going to the URL like this: http://graph.facebook.com/{yourusername}', 'wpfbogp' ) ?><br>
+						</td>
 					</tr>
 					<tr valign="top">
 						<th scope="row"><?php _e( 'Facebook Application ID:', 'wpfbogp' ) ?></th>
-						<td><input type="text" name="wpfbogp[wpfbogp_app_id]" value="<?php echo $options['wpfbogp_app_id']; ?>" class="regular-text" /><br />
-							<?php printf( __( 'For business and/or brand sites use Insights on an App ID as to not associate it with a particular person. You can use this with or without the User ID field. Create an app and use the "App ID": %s.', 'wpfbogp' ), '<a href="https://www.facebook.com/developers/apps.php" target="_blank">' . __( 'Create FB App', 'wpfbogp' ) . '</a>' ) ?></td>
+						<td><input type="text" name="wpfbogp[wpfbogp_app_id]" value="<?php echo $options['wpfbogp_app_id']; ?>" class="regular-text" /><br>
+							<?php printf( __( 'Option 2: For business/brand sites use this field for your APPlication ID (not page id) with or without the User ID field above. Create an app or edit a previous one to get the "App ID": %s.', 'wpfbogp' ), '<a href="https://developers.facebook.com/apps" target="_blank">' . __( 'Facebook Apps', 'wpfbogp' ) . '</a>' ) ?></td>
 					</tr>
 					<tr valign="top">
 						<th scope="row"><?php _e( 'Default Image URL to use:', 'wpfbogp' ) ?></th>
-						<td><input type="text" name="wpfbogp[wpfbogp_fallback_img]" value="<?php echo $options['wpfbogp_fallback_img']; ?>" class="large-text" /><br />
-							<?php _e( "Full URL including http:// to the default image to use if your posts/pages don't have a featured image or an image in the content. <strong>The image is recommended to be 200px by 200px</strong>.", 'wpfbogp' ) ?><br />
+						<td><input type="text" name="wpfbogp[wpfbogp_fallback_img]" value="<?php echo $options['wpfbogp_fallback_img']; ?>" class="large-text" /><br>
+							<?php _e( "Full URL including http:// to the default image to use if your home/posts/pages don't have a featured image or an image in the content. <strong>The image is recommended to be at least  200px by 200px</strong>.", 'wpfbogp' ) ?><br>
 							<?php printf( __( 'You can use the WordPress %s if you wish, just copy the location of the image and put it here.', 'wpfbogp' ), '<a href="media-new.php">' . __( 'media uploader', 'wpfbogp' ) . '</a>' ) ?></td>
 					</tr>
 					<tr valign="top">
 						<th scope="row"><?php _e( 'Force Fallback Image as Default', 'wpfbogp' ) ?></th>
-						<td><input type="checkbox" name="wpfbogp[wpfbogp_force_fallback]" value="1" <?php if ( $options['wpfbogp_force_fallback'] == 1 ) echo 'checked="checked"'; ?> /> <?php _e( 'Use this if you want to use the Default Image for everything instead of looking for featured/content images.', 'wpfbogp' ) ?></label></td>
+						<td><input type="checkbox" name="wpfbogp[wpfbogp_force_fallback]" value="1" <?php if ( $options['wpfbogp_force_fallback'] == 1 ) echo 'checked="checked"'; ?> /> <?php _e( 'Check this if you want to use the Default Image above for everything instead of looking for featured/content images.', 'wpfbogp' ) ?></label></td>
 					</tr>
 				</table>
 
