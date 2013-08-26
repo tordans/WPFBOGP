@@ -206,10 +206,9 @@ class WPFBOGP {
 
 		// do url stuff
 		if ( is_home() || is_front_page() ) {
-			$url = get_bloginfo( 'url' );
+			$url = trailingslashit(home_url());
 		} else {
-			$url = add_query_arg( $wp->query_string, '', home_url( $wp->request ) );
-			//$url = 'http' . ( is_ssl() ? 's' : '' ) . "://".$_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+			$url = trailingslashit(home_url(add_query_arg(array(),$wp->request)));
 		}
 		echo '<meta property="og:url" content="' . esc_url( apply_filters( 'wpfbogp_url', $url ) ) . '" />' . "\n";
 
