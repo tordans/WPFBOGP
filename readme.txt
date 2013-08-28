@@ -30,7 +30,7 @@ Once you've enabled the plugin head over to Facebook's testing tool and paste in
 1. View-Source on the page/site you're having problems with. Is THIS plugin activated? Do you see the "WordPress Facebook Open Graph protocol plugin" comment line? Search for "og:" in source and make sure you find them in the header.
 1. Are there another plugin outputting og: tags? Most plugins add them w/o doing a good job and Facebook debugger will throw an error if it see's two open graph tag sets. Most good plugins have the option to disable that output - do that, or find a better plugin.
 1. Use the Facebook Debugger located here: <a href="https://developers.facebook.com/tools/debug">https://developers.facebook.com/tools/debug</a>. This will tell you (sometimes more) what you need to know.
-1. Make sure your robots.txt or another security plugin isn't blockig the Facebook scraper bot - I've seen this happen a lot.
+1. Make sure your robots.txt or another security plugin isn't blocking the Facebook scraper bot - I've seen this happen a lot.
 1. Still having problems? Use the Support Forum and try to be descriptive, supply the site url and the specific issue - <a href="http://wordpress.org/support/plugin/wp-facebook-open-graph-protocol">http://wordpress.org/support/plugin/wp-facebook-open-graph-protocol</a>
 
 = Plugin Roadmap =
@@ -51,7 +51,7 @@ Have feature requests? Use <a href="https://github.com/chuckreynolds/WPFBOGP/iss
 = Do I need to create a Facebook Application to use this plugin? =
 No. Either your Facebook User ID or an Application ID is a requirement. You're not required to register an app, instead just use your User ID (plugin admin settings page helps you find that). You can use both an App ID and User ID if you'd like. More details on how Facebook verifies admins is located here: https://developers.facebook.com/docs/insights/
 
-= Can I use my Facebook Page ID insted =
+= Can I use my Facebook Page ID instead =
 Nope. Facebook removed that ability a while ago - only user ID's or you need to create a Facebook App for its ID.
 
 = Why doesn't this plugin have a Like/Send button? =
@@ -105,7 +105,7 @@ Because we're getting more accurate titles you may see a change in how they're p
 * non-admins won't see warning information anymore - only admins
 * complete update to GPL v3
 * fix in the image scrubber if one not set
-* new buffer to filter all the metas from framworks and seo plugins. was troublesome before - this should be nicer
+* new buffer to filter all the metas from frameworks and seo plugins. was troublesome before - this should be nicer
 * one fb:admin per meta tag now. Facebook decided having multiple in one field is no longer cool
 * added og:type blog for when on main blog page instead of wrapping that as type website
 * lot of code cleanup and better organization
@@ -113,7 +113,7 @@ Because we're getting more accurate titles you may see a change in how they're p
 
 = 2.0.7 =
 * fixes bug with certain plugins not showing description tags properly
-* added back self-close on meta tags to preserve xhtml compatability, html5 is forgiving. core does this.
+* added back self-close on meta tags to preserve xhtml compatibility, html5 is forgiving. core does this.
 
 = 2.0.6 =
 * The changes we made to fix the dollar sign in title problem caused big problems in wp admin. rolling back for now while we plan and recode a lot of the plugin w/ norcross for a bigger update. Just don't use dollar signs for now in titles. sorry. standby.

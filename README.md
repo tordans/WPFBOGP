@@ -9,7 +9,7 @@
 
 ### WordPress
 * Requires at least: 3.0
-* Tested up to: 3.5x
+* Tested up to: 3.6x
 * Current stable release: 2.0.7
 
 ### Languages
