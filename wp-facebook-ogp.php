@@ -140,7 +140,11 @@ class WPFBOGP {
 			if ( has_excerpt( $post->ID ) ) {
 				$description = strip_tags( get_the_excerpt( $post->ID ) );
 			} else {
-				$description = str_replace( "\r\n", ' ' , substr( strip_tags( strip_shortcodes( $post->post_content ) ), 0, 160 ) );
+				$charset = get_option( 'blog_charset' );
+				if( ! $charset )
+					$charset = 'UTF-8';
+
+				$description = str_replace( "\r\n", ' ' , mb_substr( strip_tags( strip_shortcodes( $post->post_content ) ), 0, 160, $charset ) );
 			}
 		} else {
 			// Default to the blog description
