@@ -401,11 +401,13 @@ class WPFBOGP {
 						<td><input type="checkbox" name="wpfbogp[wpfbogp_force_fallback]" value="1" <?php if ( $options['wpfbogp_force_fallback'] == 1 ) echo 'checked="checked"'; ?> />
 							<p class="description"><?php _e( 'Check this if you want to use the Default Image above for everything instead of looking for featured/content images.', 'wpfbogp' ) ?></p></td>
 					</tr>
+					<?php /*
 					<tr valign="top">
 						<th scope="row"><?php _e( 'Publishing FB Page', 'wpfbogp' ) ?></th>
 						<td><input type="text" name="wpfbogp[wpfbogp_fbpageurl]" value="<?php if (isset($options['wpfbogp_fbpageurl'])) { echo $options['wpfbogp_fbpageurl']; } ?>" class="large-text" />
 							<p class="description"><?php _e( 'A Facebook page URL or ID of the publishing entity. If this is filled out Facebook will add a Like button under your article when displayed on the timeline.', 'wpfbogp' ) ?></p></td>
 					</tr>
+					*/ ?>
 				</table>
 
 				<input type="submit" class="button-primary" value="<?php _e( 'Save Changes' ) ?>" />
