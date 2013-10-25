@@ -93,7 +93,7 @@ Bug fix with 1.6 initial release. Titles broke for some running 'naked sites' w/
 Because we're getting more accurate titles you may see a change in how they're pulled. If you're using an SEO plugin it should now pull that title
 
 == Changelog ==
-= 2.1 =
+= 2.2 =
 * added a link to test current page in Facebook Debugger via the Admin bar. #USEFUL!
 * added article:publisher option to enable like button on timeline for publishing page
 * translation support, German translation
@@ -110,6 +110,10 @@ Because we're getting more accurate titles you may see a change in how they're p
 * added og:type blog for when on main blog page instead of wrapping that as type website
 * lot of code cleanup and better organization
 * change how og:url permalink is pulled to work around servers not adding trailing slashes
+* check for charset being set and do it if not - should help with internationalization for desc. (props -> birgire on github)
+
+= 2.1 = 
+* version was used in dev only
 
 = 2.0.7 =
 * fixes bug with certain plugins not showing description tags properly
