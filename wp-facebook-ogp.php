@@ -357,7 +357,7 @@ class WPFBOGP {
 							<h3 class="hndle" id="about-sidebar"><?php _e( 'Relevant Information:', 'wpfbogp' ) ?></h3>
 							<div class="inside">
 								<p><a href="http://ogp.me" target="_blank"><?php _e( 'The Open Graph Protocol', 'wpfbogp' ) ?></a><br />
-								<a href="https://developers.facebook.com/docs/opengraph/" target="_blank"><?php _e( 'Facebook Open Graph Docs', 'wpfbogp' ) ?></a><br />
+								<a href="https://developers.facebook.com/docs/opengraph/using-objects/" target="_blank"><?php _e( 'Facebook Open Graph Docs', 'wpfbogp' ) ?></a><br />
 								<a href="https://developers.facebook.com/docs/insights/" target="_blank"><?php _e( 'Insights: Domain vs App vs Page', 'wpfbogp' ) ?></a><br />
 								<a href="https://developers.facebook.com/docs/reference/plugins/like/" target="_blank"><?php _e( 'How To Add a Like Button', 'wpfbogp' ) ?></a></p>
 							</div>
