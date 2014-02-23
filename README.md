@@ -9,16 +9,15 @@
 
 ### WordPress
 * Requires at least: 3.0
-* Tested up to: 3.6x
+* Tested up to: 3.8.x
 * Current stable release: 2.0.7
 
 ### Languages
 * English
 * German
 
-Help to translate at [https://translate.foe-services.de/projects/wpfbogp](https://translate.foe-services.de/projects/wpfbogp)
-
 ### License
 License: [GPL v3](http://www.gnu.org/licenses/gpl-3.0.html)
 
 ### Contributions via Pull Requests are always welcome!
+### Help to translate also welcome!
