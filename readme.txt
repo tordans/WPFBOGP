@@ -3,10 +3,10 @@ Contributors: ryno267, andrewryno
 Donate link: http://goo.gl/8lGv3
 Tags: open graph, ogp, facebook open graph, google +1, +1, google plus one, plus one, linkedin share, facebook meta, open graph meta, facebook share, facebook like, linkedin
 Requires at least: 3.0
-Tested up to: 3.6
-Stable tag: 2.0.7
-License: GPL v3
-License URI: http://www.gnu.org/licenses/gpl-3.0.html
+Tested up to: 3.8.1
+Stable tag: 2.2
+License: GPLv2 or later
+License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 Adds proper Facebook Open Graph Meta tags and values to your site so when links are shared it looks awesome!
 
@@ -34,11 +34,10 @@ Once you've enabled the plugin head over to Facebook's testing tool and paste in
 1. Still having problems? Use the Support Forum and try to be descriptive, supply the site url and the specific issue - <a href="http://wordpress.org/support/plugin/wp-facebook-open-graph-protocol">http://wordpress.org/support/plugin/wp-facebook-open-graph-protocol</a>
 
 = Plugin Roadmap =
-Have feature requests? Use <a href="https://github.com/chuckreynolds/WPFBOGP/issues">Github Issues</a> and add an issue with a good explanation of WHAT you'd like to see implemented and WHY you think it's a good contribution to the plugin. You can also do a Pull Request and code it in yourself and we'll review that and see if it's something that fits and get to testing it.
+Have feature requests? Use <a href="https://github.com/chuckreynolds/WPFBOGP/issues">Github Issues</a> and add an issue with a good explanation of WHAT you'd like to see implemented and WHY you think it's a good contribution to the plugin. **Pull Requests Welcomed** - code it in yourself and we'll review that and see if it's something that fits and get to testing it.
 
 = Development =
 * Contribute Code at [https://github.com/chuckreynolds/WPFBOGP](https://github.com/chuckreynolds/WPFBOGP)
-* Contribute Translations at [https://translate.foe-services.de/projects/wpfbogp](https://translate.foe-services.de/projects/wpfbogp)
 
 == Installation ==
 
@@ -55,15 +54,15 @@ No. Either your Facebook User ID or an Application ID is a requirement. You're n
 Nope. Facebook removed that ability a while ago - only user ID's or you need to create a Facebook App for its ID.
 
 = Why doesn't this plugin have a Like/Send button? =
-Honestly it's not hard to add one once you have the proper meta content in the header. Look at <a href="https://developers.facebook.com/docs/reference/plugins/like/">how to add a Like button</a> using fb:like. There are a lot of 'like' button plugins but this one focuses on solid and accurate Open Graph meta data.
+Honestly it's not hard to add one once you have the proper meta content in the header. Look at <a href="https://developers.facebook.com/docs/plugins/like-button">how to add a Like button</a> using fb:like. There are a lot of 'like' button plugins but this one focuses on solid and accurate Open Graph meta data.
 
 == Screenshots ==
 
 1. The Open Graph admin options panel has all options laid out in one easy place. The rest is all behind the scenes.
 
 == Upgrade Notice ==
-= 2.1 =
-This is a pretty significant update and fixes a lot of bugs and cleans up a lot too.
+= 2.2 =
+This is a pretty significant update and fixes a lot of bugs, adds features and cleans up a lot too
 
 = 2.0.7 =
 fixes bug with certain plugins not showing description tags properly
@@ -95,15 +94,13 @@ Because we're getting more accurate titles you may see a change in how they're p
 == Changelog ==
 = 2.2 =
 * added a link to test current page in Facebook Debugger via the Admin bar. #USEFUL!
-* added article:publisher option to enable like button on timeline for publishing page
-* translation support, German translation
+* German translation added
 * change media link in admin to media-new.php from base media library list
 * change sort so default image shows up first when other images set
 * contingency for if default checkbox is set but no default image is set
 * update html namespace to prefix (ogp.me) from xmlns (facebook)
 * testing the_title_attribute('echo=0') in title drop
 * non-admins won't see warning information anymore - only admins
-* complete update to GPL v3
 * fix in the image scrubber if one not set
 * new buffer to filter all the metas from frameworks and seo plugins. was troublesome before - this should be nicer
 * one fb:admin per meta tag now. Facebook decided having multiple in one field is no longer cool
@@ -113,7 +110,7 @@ Because we're getting more accurate titles you may see a change in how they're p
 * check for charset being set and do it if not - should help with internationalization for desc. (props -> birgire on github)
 
 = 2.1 = 
-* version was used in dev only
+* version was used in dev only. I messed up so... version bump. sorry. 
 
 = 2.0.7 =
 * fixes bug with certain plugins not showing description tags properly

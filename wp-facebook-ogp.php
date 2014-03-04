@@ -1,35 +1,35 @@
 <?php
 /*
 Plugin Name:    WP Facebook Open Graph protocol
-Plugin URI:     http://wordpress.org/extend/plugins/wp-facebook-open-graph-protocol/
+Plugin URI:     http://wordpress.org/plugins/wp-facebook-open-graph-protocol/
 Description:    Adds proper Facebook Open Graph Meta tags and values to your site so when links are shared it looks awesome! Works on Google + and Linkedin too!
-Version:        2.1
+Version:        2.2
 Author:         Chuck Reynolds
 Author URI:     http://chuckreynolds.us
-License:        GPL v3
-License URI:    http://www.gnu.org/licenses/gpl-3.0.html
 Text Domain:    wpfbogp
 Domain Path:    /languages/
-*/
-/*
-	Copyright 2011 WordPress Facebook Open Graph protocol plugin (email: chuck@rynoweb.com)
+License: 		GPLv2 or later
+License URI: 	http://www.gnu.org/licenses/gpl-2.0.html
 
-	This program is free software: you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation, version 3 of the License.
+Copyright 2014 Chuck Reynolds (email : chuck@rynoweb.com)
 
-	This program is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License, version 2, as
+published by the Free Software Foundation.
 
-	You should have received a copy of the GNU General Public License
-	along with this program. If not, see http://www.gnu.org/licenses/gpl-3.0.html
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 */
 
 class WPFBOGP {
 
-	const VERSION = '2.1';
+	const VERSION = '2.2';
 
 	public function __construct() {
 		// Check to see if any warnings should be shown to admins
@@ -140,7 +140,7 @@ class WPFBOGP {
 			if ( has_excerpt( $post->ID ) ) {
 				$description = strip_tags( get_the_excerpt( $post->ID ) );
 			} else {
-				// help with internationalization by makeing sure charset is at least set.
+				// help with internationalization by making sure charset is at least set.
 				$charset = get_option( 'blog_charset' );
 				if( ! $charset )
 					$charset = 'UTF-8';
@@ -241,9 +241,10 @@ class WPFBOGP {
 		echo '<meta property="og:type" content="' . esc_attr( apply_filters( 'wpfbogp_type', $type ) ) . '" />' . "\n";
 
 		// staging facebook page url for like on ogp embeds
-		if ( isset( $options['wpfbogp_fbpageurl'] ) && ! empty( $options['wpfbogp_fbpageurl'] ) ) {
-		echo '<meta property="article:publisher" content="' . esc_attr( apply_filters( 'wpfbogp_fbpageurl', $options['wpfbogp_fbpageurl'] ) ) . '" />' . "\n";
-		}
+		// this isn't ready yet. more testing and clarification from FB needed
+		# if ( isset( $options['wpfbogp_fbpageurl'] ) && ! empty( $options['wpfbogp_fbpageurl'] ) ) {
+		# echo '<meta property="article:publisher" content="' . esc_attr( apply_filters( 'wpfbogp_fbpageurl', $options['wpfbogp_fbpageurl'] ) ) . '" />' . "\n";
+		# }
 
 		// Find/output any images for use in the OGP tags
 		$wpfbogp_images = array();
@@ -359,7 +360,7 @@ class WPFBOGP {
 								<p><a href="http://ogp.me" target="_blank"><?php _e( 'The Open Graph Protocol', 'wpfbogp' ) ?></a><br />
 								<a href="https://developers.facebook.com/docs/opengraph/using-objects/" target="_blank"><?php _e( 'Facebook Open Graph Docs', 'wpfbogp' ) ?></a><br />
 								<a href="https://developers.facebook.com/docs/insights/" target="_blank"><?php _e( 'Insights: Domain vs App vs Page', 'wpfbogp' ) ?></a><br />
-								<a href="https://developers.facebook.com/docs/reference/plugins/like/" target="_blank"><?php _e( 'How To Add a Like Button', 'wpfbogp' ) ?></a></p>
+								<a href="https://developers.facebook.com/docs/plugins/like-button" target="_blank"><?php _e( 'How To Add a Like Button', 'wpfbogp' ) ?></a></p>
 							</div>
 						</div>
 					</div>
