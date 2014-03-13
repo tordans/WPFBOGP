@@ -3,7 +3,7 @@
 Plugin Name:    WP Facebook Open Graph protocol
 Plugin URI:     http://wordpress.org/plugins/wp-facebook-open-graph-protocol/
 Description:    Adds proper Facebook Open Graph Meta tags and values to your site so when links are shared it looks awesome! Works on Google + and Linkedin too!
-Version:        2.2
+Version:        2.1
 Author:         Chuck Reynolds
 Author URI:     http://chuckreynolds.us
 Text Domain:    wpfbogp
@@ -29,7 +29,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 class WPFBOGP {
 
-	const VERSION = '2.2';
+	const VERSION = '2.1dev';
 
 	public function __construct() {
 		// Check to see if any warnings should be shown to admins
@@ -242,9 +242,9 @@ class WPFBOGP {
 
 		// staging facebook page url for like on ogp embeds
 		// this isn't ready yet. more testing and clarification from FB needed
-		# if ( isset( $options['wpfbogp_fbpageurl'] ) && ! empty( $options['wpfbogp_fbpageurl'] ) ) {
-		# echo '<meta property="article:publisher" content="' . esc_attr( apply_filters( 'wpfbogp_fbpageurl', $options['wpfbogp_fbpageurl'] ) ) . '" />' . "\n";
-		# }
+		/* if ( isset( $options['wpfbogp_fbpageurl'] ) && ! empty( $options['wpfbogp_fbpageurl'] ) ) {
+		echo '<meta property="article:publisher" content="' . esc_attr( apply_filters( 'wpfbogp_fbpageurl', $options['wpfbogp_fbpageurl'] ) ) . '" />' . "\n";
+		} */
 
 		// Find/output any images for use in the OGP tags
 		$wpfbogp_images = array();
@@ -321,7 +321,10 @@ class WPFBOGP {
 	 * @return void
 	 */
 	public function buildpage() {
-		load_plugin_textdomain( 'wpfbogp', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
+/*
+ *		Commenting out to help test
+ *		load_plugin_textdomain( 'wpfbogp', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
+ */
 		?>
 		<div class="wrap">
 			<h2><?php printf( _x( 'Facebook Open Graph protocol plugin %s', 'Headline + Version', 'wpfbogp' ), '<em>v' . self::VERSION . '</em>' ) ?></h2>
