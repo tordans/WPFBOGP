@@ -18,23 +18,23 @@ Shortname: WPFBOGP
 By popular demand we've added a setting so the Fallback image in settings can be the default sitewide. If you don't check that box, here's now she works.
 The plugin will first look for a featured image. If there isn't one or your theme doesn't have those available, then it will pull the image(s) in the post/page content. If that isn't there either, then it will default to using the image you put into the plugin settings in the admin panel. If THAT isn't there then... well you fail and you won't have an image and we'll put a comment in your source to remind you to add one as Facebook requires one.
 New in 2.0 - We'll pull ALL those images and feed them to Facebook and Google + so you can hit the arrows to select which one you want. It will use the fallback image first IF it's selected as default, then will do featured image next and then any content images.
-Test with the <a href="http://developers.facebook.com/tools/debug">Facebook Debugger</a>.
+Test with the [Facebook Debugger](https://developers.facebook.com/tools/debug).
 
 = Title and Description =
 New in 2.0+, the plugin will use the title and meta description from ANY SEO plugin or theme, including Genesis and Thesis. Worst case it'll fall back to pulling some of your content as a last-ditch backup. But if you're concerned with what your Open Graph tags look like, then you should probably be running some kind of SEO plugin anyways. AMIRITE?
 
 = Testing Your Site =
-Once you've enabled the plugin head over to Facebook's testing tool and paste in one of your post/page url's or your home page to see what info Facebook is pulling in. This tool is located here: <a href="https://developers.facebook.com/tools/debug">https://developers.facebook.com/tools/debug</a>. This tool also clears FB cache, so if you tested before the plugin and after is showing the same stuff - load the debugger to refresh it.
+Once you've enabled the plugin head over to Facebook's testing tool and paste in one of your post/page url's or your home page to see what info Facebook is pulling in. This tool is located here: [https://developers.facebook.com/tools/debug](https://developers.facebook.com/tools/debug). This tool also clears FB cache, so if you tested before the plugin and after is showing the same stuff - load the debugger to refresh it.
 
 = Having Problems? 95% of the time this works every time =
 1. View-Source on the page/site you're having problems with. Is THIS plugin activated? Do you see the "WordPress Facebook Open Graph protocol plugin" comment line? Search for "og:" in source and make sure you find them in the header.
 1. Are there another plugin outputting og: tags? Most plugins add them w/o doing a good job and Facebook debugger will throw an error if it see's two open graph tag sets. Most good plugins have the option to disable that output - do that, or find a better plugin.
-1. Use the Facebook Debugger located here: <a href="https://developers.facebook.com/tools/debug">https://developers.facebook.com/tools/debug</a>. This will tell you (sometimes more) what you need to know.
+1. Use the Facebook Debugger located here: [https://developers.facebook.com/tools/debug](https://developers.facebook.com/tools/debug). This will tell you (sometimes more) what you need to know.
 1. Make sure your robots.txt or another security plugin isn't blocking the Facebook scraper bot - I've seen this happen a lot.
-1. Still having problems? Use the Support Forum and try to be descriptive, supply the site url and the specific issue - <a href="http://wordpress.org/support/plugin/wp-facebook-open-graph-protocol">http://wordpress.org/support/plugin/wp-facebook-open-graph-protocol</a>
+1. Still having problems? Use the Support Forum and try to be descriptive, supply the site url and the specific issue - [WP FB OGP Support](http://wordpress.org/support/plugin/wp-facebook-open-graph-protocol)
 
 = Plugin Roadmap =
-Have feature requests? Use <a href="https://github.com/chuckreynolds/WPFBOGP/issues">Github Issues</a> and add an issue with a good explanation of WHAT you'd like to see implemented and WHY you think it's a good contribution to the plugin. **Pull Requests Welcomed** - code it in yourself and we'll review that and see if it's something that fits and get to testing it.
+Have feature requests? Use [Github Issues](https://github.com/chuckreynolds/WPFBOGP/issues) and add an issue with a good explanation of WHAT you'd like to see implemented and WHY you think it's a good contribution to the plugin. **Pull Requests Welcomed** - code it in yourself and we'll review that and see if it's something that fits and get to testing it.
 
 = Development =
 * Contribute Code at [https://github.com/chuckreynolds/WPFBOGP](https://github.com/chuckreynolds/WPFBOGP)
@@ -48,13 +48,13 @@ Have feature requests? Use <a href="https://github.com/chuckreynolds/WPFBOGP/iss
 == Frequently Asked Questions ==
 
 = Do I need to create a Facebook Application to use this plugin? =
-No. Either your Facebook User ID or an Application ID is a requirement. You're not required to register an app, instead just use your User ID (plugin admin settings page helps you find that). You can use both an App ID and User ID if you'd like. More details on how Facebook verifies admins is located here: https://developers.facebook.com/docs/insights/
+No. Either your Facebook User ID or an Application ID is a requirement. You're not required to register an app, instead just use your User ID (plugin admin settings page helps you find that). You can use both an App ID and User ID if you'd like. More details on how Facebook verifies admins is located here: [Facebook Dev Insights](https://developers.facebook.com/docs/insights/)
 
 = Can I use my Facebook Page ID instead =
 Nope. Facebook removed that ability a while ago - only user ID's or you need to create a Facebook App for its ID.
 
 = Why doesn't this plugin have a Like/Send button? =
-Honestly it's not hard to add one once you have the proper meta content in the header. Look at <a href="https://developers.facebook.com/docs/plugins/like-button">how to add a Like button</a> using fb:like. There are a lot of 'like' button plugins but this one focuses on solid and accurate Open Graph meta data.
+Honestly it's not hard to add one once you have the proper meta content in the header. Look at [how to add a Like button](https://developers.facebook.com/docs/plugins/like-button) using fb:like. There are a lot of 'like' button plugins but this one focuses on solid and accurate Open Graph meta data.
 
 == Screenshots ==
 
@@ -227,13 +227,10 @@ Because we're getting more accurate titles you may see a change in how they're p
 * Initial beta release
 
 == Other Notes ==
-
-= LinkedIn Documentation =
-Linkedin (as of 2013-04-10) only requires the Open Graph title, description, url and image (min 80x150) as per this page http://developer.linkedin.com/documents/share-api
-Test with Linkedin:
+Linkedin (as of 2013-04-10) only requires the Open Graph title, description, url and image (min 80x150) as per [Linkedin Share API](https://developer.linkedin.com/documents/share-api)
 
 Google Plus still (as of 2013-04-10) pulls Open Graph data as well but is still limited to title, description, url and image as per this page https://developers.google.com/+/web/snippet/  but no image sizes are designated.
-Test with Google: http://www.google.com/webmasters/tools/richsnippets
+Test with [Google Rich Snippets](http://www.google.com/webmasters/tools/richsnippets)
 
 Some have asked about Twitter support... they have recently (as of 2013-04) added cards but this is out of the scope of this plugin.
-Summary Card info for those still interested: https://dev.twitter.com/docs/cards/types/summary-card
+[Twitter Summary Card info](https://dev.twitter.com/docs/cards/types/summary-card)
