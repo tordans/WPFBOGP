@@ -338,11 +338,11 @@ class WPFBOGP {
 									<?php _e( 'If you are experiencing issues with the correct information appearing on Facebook, please follow these steps:', 'wpfbogp' ); ?><br>
 									<?php _e( '1. View-Source to see if there is another plugin adding in additional og: tags.', 'wpfbogp' ); ?><br>
 									<?php printf( __( '2. Run the URL through the <a href="%s">Facebook Debugger</a> to check for errors.', 'wpfbogp' ), 'https://developers.facebook.com/tools/debug' ); ?><br>
-									<?php printf( __( '3. If none of those fixed your problem then feel free to start/join a thread on the <a href="%s">Support Forums</a>.', 'wpfbogp' ), 'https://developers.facebook.com/tools/debug' ); ?>
+									<?php printf( __( '3. If none of those fixed your problem then feel free to start/join a thread on the <a href="%s">Support Forums</a>.', 'wpfbogp' ), 'http://wordpress.org/support/plugin/wp-facebook-open-graph-protocol' ); ?>
 								</p>
 
 								<p><strong><?php _e( 'Enjoy the plugin?', 'wpfbogp' ) ?></strong><br />
-								<?php printf( __( '%s and consider donating.', 'wpfbogp' ), '<a href="http://twitter.com/?status=I\'m using the WordPress Facebook Open Graph plugin by @chuckreynolds - check it out! http://wordpress.org/support/plugin/wp-facebook-open-graph-protocol" target="_blank">' . __( 'Tweet about it', 'wpfbogp' ) . '</a>' ) ?></p>
+								<?php printf( __( '%s and consider donating.', 'wpfbogp' ), '<a href="http://twitter.com/?status=I\'m using the WordPress Facebook Open Graph plugin by @chuckreynolds - check it out! http://wordpress.org/plugins/wp-facebook-open-graph-protocol/" target="_blank">' . __( 'Tweet about it', 'wpfbogp' ) . '</a>' ) ?></p>
 
 								<p><strong><?php _e( 'Support Us', 'wpfbogp' ) ?></strong><br />
 									<?php _e( 'A lot of hard work goes into building plugins - support your open source developers. Include your twitter username and I\'ll send you a shout out for your generosity. Thank you!', 'wpfbogp' ) ?><br />
