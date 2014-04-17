@@ -138,7 +138,7 @@ class WPFBOGP {
 			// Use any custom excerpt before simply truncating the content,
 			// but ignore the front page.
 			if ( has_excerpt( $post->ID ) ) {
-				$description = strip_tags( get_the_excerpt( $post->ID ) );
+				$description = strip_tags( get_the_excerpt() );
 			} else {
 				// help with internationalization by making sure charset is at least set.
 				$charset = get_option( 'blog_charset' );
