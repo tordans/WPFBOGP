@@ -3,7 +3,7 @@ Contributors: ryno267, andrewryno
 Donate link: http://goo.gl/8lGv3
 Tags: open graph, ogp, facebook open graph, google +1, +1, google plus one, plus one, linkedin share, facebook meta, open graph meta, facebook share, facebook like, linkedin
 Requires at least: 3.0
-Tested up to: 3.8.1
+Tested up to: 3.9
 Stable tag: 2.1dev
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -107,7 +107,8 @@ Because we're getting more accurate titles you may see a change in how they're p
 * added og:type blog for when on main blog page instead of wrapping that as type website
 * lot of code cleanup and better organization
 * change how og:url permalink is pulled to work around servers not adding trailing slashes
-* check for charset being set and do it if not - should help with internationalization for desc. (props -> birgire on github)
+* check for charset being set and do it if not - should help with internationalization for desc. props -> github.com/birgire
+* remove deprecated argument from `get_the_excerpt`. Fixes PHP Notice. props -> github.com/jjeaton
 
 = 2.1 = 
 * version was used in dev only. I messed up so... version bump. sorry. 
