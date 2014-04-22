@@ -36,7 +36,7 @@ class WPFBOGP {
 		$this->admin_warnings();
 
 		// Jetpack used to force it in, seems to have stopped but just for good measure
-		remove_action( 'wp_head', array( $this, 'jetpack_og_tags' ) );
+		remove_action( 'wp_head', 'jetpack_og_tags' );
 
 		// Add the OGP namespace to the <html> tag.
 		add_filter( 'language_attributes', array( $this, 'ogpprefix' ) );
