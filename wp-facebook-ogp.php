@@ -105,7 +105,7 @@ function wpfbogp_build_head() {
 		return '';
 	}
 
-	$options = get_option('wpfbogp');
+	$options = wpfbogp_get_option();
 	// check to see if you've filled out one of the required fields and announce if not
 	if ( ( ! isset( $options['wpfbogp_admin_ids'] ) || empty( $options['wpfbogp_admin_ids'] ) ) && ( ! isset( $options['wpfbogp_app_id'] ) || empty( $options['wpfbogp_app_id'] ) ) ) {
 		echo "\n<!-- Facebook Open Graph protocol plugin NEEDS an admin or app ID to work, please visit the plugin settings page! -->\n";
@@ -196,6 +196,27 @@ function wpfbogp_build_head() {
 	}
 }
 
+// One place to get the options.
+// First check for multisites and try getting those options. Returns false if none present.
+// Then use the blog options.
+function wpfbogp_get_option() {
+	if( is_multisite() == true ) {
+		$options = get_site_option('wpfbogp', false, true);
+	}
+	if( $options === false ) {
+		$options = get_option('wpfbogp');
+	}
+	return $options;
+}
+
+// One place to delete the options. Multisite and blog.
+function wpfbogp_delete_option() {
+	if( is_multisite() == true ) {
+		delete_site_option('wpfbogp');
+	}
+	delete_option('wpfbogp');
+}
+
 add_action('wp_head','wpfbogp_build_head',50);
 add_action('admin_init','wpfbogp_init');
 add_action('admin_menu','wpfbogp_add_page');
@@ -207,7 +228,12 @@ function wpfbogp_init() {
 
 // add admin page to menu
 function wpfbogp_add_page() {
-	add_options_page('Facebook Open Graph protocol plugin','Facebook OGP','manage_options','wpfbogp','wpfbogp_buildpage');
+	$options = wpfbogp_get_option();
+	if( array_key_exists( 'wpfbogp_hide_page', $options ) ) {
+		if( $options['wpfbogp_hide_page'] != true ) {
+			add_options_page('Facebook Open Graph protocol plugin','Facebook OGP','manage_options','wpfbogp','wpfbogp_buildpage');
+		}
+	}
 }
 
 // build admin page
@@ -258,7 +284,7 @@ function wpfbogp_buildpage() {
 
 		<form method="post" action="options.php">
 			<?php settings_fields('wpfbogp_options'); ?>
-			<?php $options = get_option('wpfbogp'); ?>
+			<?php $options = wpfbogp_get_option(); ?>
 
 		<table class="form-table">
 			<tr valign="top">
@@ -309,7 +335,7 @@ function wpfbogp_validate($input) {
 // run admin notices on activation or if settings not set
 function wpfbogp_admin_warnings() {
 	global $wpfbogp_admins;
-		$wpfbogp_data = get_option('wpfbogp');
+		$wpfbogp_data = wpfbogp_get_option();
 	if ((empty($wpfbogp_data['wpfbogp_admin_ids']) || $wpfbogp_data['wpfbogp_admin_ids'] == '') && (empty($wpfbogp_data['wpfbogp_app_id']) || $wpfbogp_data['wpfbogp_app_id'] == '')) {
 		function wpfbogp_warning() {
 			echo "<div id='wpfbogp-warning' class='updated fade'><p><strong>".__('WP FB OGP is almost ready.')."</strong> ".sprintf(__('You must <a href="%1$s">enter your Facebook User ID or App ID</a> for it to work.'), "options-general.php?page=wpfbogp")."</p></div>";
@@ -341,6 +367,6 @@ add_filter('plugin_action_links','wpfbogp_add_settings_link', 10, 2 );
 if (function_exists('register_uninstall_hook')) {
     register_uninstall_hook(__FILE__, 'wpfbogp_uninstall_hook');
 	function wpfbogp_uninstall_hook() {
-		delete_option('wpfbogp');
+		wpfbogp_delete_option();
 	}
 }
