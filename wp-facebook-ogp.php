@@ -168,7 +168,7 @@ function wpfbogp_build_head() {
 
 		// Add the fallback image to the images array (which is empty if it's being forced)
 		if ( isset( $options['wpfbogp_fallback_img'] ) && $options['wpfbogp_fallback_img'] != '') {
-			$wpfbogp_images[] = $options['wpfbogp_fallback_img']; // Add to images array
+			$wpfbogp_images[] = esc_attr( apply_filters( 'wpfbogp_fallback_img', $options['wpfbogp_fallback_img'] ) ); // Add to images array
 		}
 
 		// Make sure there were images passed as an array and loop through/output each
