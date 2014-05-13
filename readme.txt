@@ -41,7 +41,7 @@ If you have feature requests or bugs? Use the support links on <a href="http://r
 No. Either your Facebook User ID or or an Application ID is a requirement. You're not required to register an app, instead just use your User ID (plugin admin settings page helps you find that). You can use both an App ID and User ID if you'd like. More details on how Facebook verifies admins is located here: https://developers.facebook.com/docs/insights/
 
 = Why doesn't this plugin have a Like/Send button? =
-Honestly it's not hard to add one once you have the proper meta content in the header. Look at <a href="https://developers.facebook.com/docs/reference/plugins/like/">how to add a Like button</a> using fb:like. There are a lot of 'like' button plugins but this one focuses on solid and accurate Open Graph meta data. 
+Honestly it's not hard to add one once you have the proper meta content in the header. Look at <a href="https://developers.facebook.com/docs/reference/plugins/like/">how to add a Like button</a> using fb:like. There are a lot of 'like' button plugins but this one focuses on solid and accurate Open Graph meta data.
 
 == Screenshots ==
 
@@ -66,7 +66,7 @@ Fixes issues with dollar signs and special characters in titles and descriptions
 = 2.0.3 =
 This update should fix the "Parser Mismatched Metadata" warnings Facebook started throwing.
 
-= 2.0.2 = 
+= 2.0.2 =
 Fixes bug that caused a PHP warning to display and also fixes bugs with plugins not functioning properly when using content filters.
 
 = 2.0.1 =
@@ -145,7 +145,7 @@ Because we're getting more accurate titles you may see a change in how they're p
 * bug fix in urlpath again & check for https. Props goes to Seb Francis at burnit.co.uk for better fix.
 
 = 1.5.1 =
-* bug fix in image basepath thing I fixed in 1.5... false checking. make sure to update this or your images could not display on facebook 
+* bug fix in image basepath thing I fixed in 1.5... false checking. make sure to update this or your images could not display on facebook
 
 = 1.5 =
 * simple cleanup and couple bug fixes
