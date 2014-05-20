@@ -28,13 +28,21 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 define('WPFBOGP_VERSION', '2.0.10');
 wpfbogp_admin_warnings();
 
-// add OGP namespace per ogp.me schema
+/**
+* Add OGP namespace per ogp.me schema
+*
+* @return string with opg.me schema added
+*/
 function wpfbogp_namespace($output) {
 	return $output.' prefix="og: http://ogp.me/ns#"';
 }
 add_filter('language_attributes','wpfbogp_namespace');
 
-// function to call first uploaded image in content
+/**
+* Function to call first uploaded image in content
+*
+* @return array of images from the current post
+*/
 function wpfbogp_find_images() {
 	global $post, $posts;
 
@@ -64,6 +72,11 @@ function wpfbogp_find_images() {
 	return $wpfbogp_images;
 }
 
+/**
+* Start the output buffer for 'wpfbogp_callback'
+*
+* @return void
+*/
 function wpfbogp_start_ob() {
 	// Start the buffer before any output
 	if ( ! is_feed() ) {
@@ -71,6 +84,11 @@ function wpfbogp_start_ob() {
 	}
 }
 
+/**
+* Create the og:title and og:description tag with content from blog <title> and meda description
+*
+* @return string of og meta tags
+*/
 function wpfbogp_callback( $content ) {
 	// Grab the page title and meta description
 	$title = preg_match( '/<title>(.*)<\/title>/', $content, $title_matches );
@@ -88,6 +106,11 @@ function wpfbogp_callback( $content ) {
 	return $content;
 }
 
+/**
+* End the output buffer for 'wpfbogp_callback'
+*
+* @return void
+*/
 function wpfbogp_flush_ob() {
 	if ( ! is_feed() ) {
 		ob_end_flush();
@@ -97,7 +120,11 @@ function wpfbogp_flush_ob() {
 add_action( 'init', 'wpfbogp_start_ob', 0 );
 add_action( 'wp_footer', 'wpfbogp_flush_ob', 10000 ); // Fire after other plugins (which default to priority 10)
 
-// build ogp meta
+/**
+* Build ogp meta
+*
+* @return string of meta tag content
+*/
 function wpfbogp_build_head() {
 	global $post;
 
@@ -196,9 +223,15 @@ function wpfbogp_build_head() {
 	}
 }
 
-// One place to get the options.
-// First check for multisites and try getting those options. Returns false if none present.
-// Then use the blog options.
+/**
+* Getter for the wpfbogp options-array
+*
+* Use this getter whenever you need to get the plugin options.
+* It checks for options on multi site level first.
+* Should there be none, it checks the blog options.
+*
+* @return array of wordpress options "wpfbogp"
+*/
 function wpfbogp_get_option() {
 	if( is_multisite() == true ) {
 		$options = get_site_option('wpfbogp', false, true);
@@ -209,7 +242,13 @@ function wpfbogp_get_option() {
 	return $options;
 }
 
-// One place to delete the options. Multisite and blog.
+/**
+* Deletes all wpfbogp from wordpress options table
+*
+* It deletes the blog options as well als multi site options.
+*
+* @return void
+*/
 function wpfbogp_delete_option() {
 	if( is_multisite() == true ) {
 		delete_site_option('wpfbogp');
@@ -221,12 +260,23 @@ add_action('wp_head','wpfbogp_build_head',50);
 add_action('admin_init','wpfbogp_init');
 add_action('admin_menu','wpfbogp_add_page');
 
-// register settings and sanitization callback
+/**
+* Register settings and sanitization callback
+*
+* @return void
+*/
 function wpfbogp_init() {
 	register_setting('wpfbogp_options','wpfbogp','wpfbogp_validate');
 }
 
-// add admin page to menu
+/**
+* Add admin page to menu
+*
+* You can hide the admin menu with the option 'wpfbogp_hide_page'
+* You need to set this option with a custom plugin.
+*
+* @return void
+*/
 function wpfbogp_add_page() {
 	$options = wpfbogp_get_option();
 	if( array_key_exists( 'wpfbogp_hide_page', $options ) ) {
@@ -236,7 +286,11 @@ function wpfbogp_add_page() {
 	}
 }
 
-// build admin page
+/**
+* Build the admin page
+*
+* @return returns (echo) the form html
+*/
 function wpfbogp_buildpage() {
 ?>
 
@@ -323,7 +377,12 @@ function wpfbogp_buildpage() {
 <?php
 }
 
-// sanitize inputs. accepts an array, return a sanitized array.
+/**
+* Sanitize inputs.
+*
+* @var $input array
+* @return returns a sanatized array
+*/
 function wpfbogp_validate($input) {
 	$input['wpfbogp_admin_ids'] = wp_filter_nohtml_kses($input['wpfbogp_admin_ids']);
 	$input['wpfbogp_app_id'] = wp_filter_nohtml_kses($input['wpfbogp_app_id']);
@@ -332,7 +391,11 @@ function wpfbogp_validate($input) {
 	return $input;
 }
 
-// run admin notices on activation or if settings not set
+/**
+* Run admin notices on activation or if settings not set
+*
+* @return void
+*/
 function wpfbogp_admin_warnings() {
 	global $wpfbogp_admins;
 		$wpfbogp_data = wpfbogp_get_option();
@@ -344,14 +407,22 @@ function wpfbogp_admin_warnings() {
 	}
 }
 
-// twentyten and twentyeleven add crap to the excerpt so lets check for that and remove
+/**
+* twentyten and twentyeleven add crap to the excerpt so lets check for that and remove
+*
+* @return void
+*/
 add_action('after_setup_theme','wpfbogp_fix_excerpts_exist');
 function wpfbogp_fix_excerpts_exist() {
 	remove_filter('get_the_excerpt','twentyten_custom_excerpt_more');
 	remove_filter('get_the_excerpt','twentyeleven_custom_excerpt_more');
 }
 
-// add settings link to plugins list
+/**
+* Add settings link to plugins list
+*
+* @return string with link to settings
+*/
 function wpfbogp_add_settings_link($links, $file) {
 	static $this_plugin;
 	if (!$this_plugin) $this_plugin = plugin_basename(__FILE__);
@@ -363,7 +434,11 @@ function wpfbogp_add_settings_link($links, $file) {
 }
 add_filter('plugin_action_links','wpfbogp_add_settings_link', 10, 2 );
 
-// lets offer an actual clean uninstall and rem db row on uninstall
+/**
+* Lets offer an actual clean uninstall and rem db row on uninstall
+*
+* @return void
+*/
 if (function_exists('register_uninstall_hook')) {
     register_uninstall_hook(__FILE__, 'wpfbogp_uninstall_hook');
 	function wpfbogp_uninstall_hook() {
