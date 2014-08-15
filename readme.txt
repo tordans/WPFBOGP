@@ -3,8 +3,8 @@ Contributors: ryno267, andrewryno
 Donate link: http://goo.gl/8lGv3
 Tags: open graph, ogp, facebook open graph, google +1, +1, google plus one, plus one, linkedin share, facebook meta, open graph meta, facebook share, facebook like, linkedin
 Requires at least: 3.0
-Tested up to: 3.9
-Stable tag: 2.0.10
+Tested up to: 3.9.1
+Stable tag: 2.0.11
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -61,6 +61,9 @@ For WordPress Multisite users: Add a plugin to modify those filters and activate
 * ```wpfbogp_fallback_img``` – Modify og:image for the fallback image
 
 == Upgrade Notice ==
+= 2.0.11 =
+Fixes an issue some had with thumbnail image paths & fixes php notice some were getting. Cheers.
+
 = 2.0.9 =
 uses large size thumbnail instead of medium. bigger is better!
 
@@ -95,6 +98,11 @@ Bug fix with 1.6 initial release. Titles broke for some running 'naked sites' w/
 Because we're getting more accurate titles you may see a change in how they're pulled. If you're using an SEO plugin it should now pull that title
 
 == Changelog ==
+= 2.0.11 =
+* Check for relative URLs in post thumbnails images - props -> github.com/jjeaton
+* fixes problem w/ strings in image array
+* flip image array. this will move your default image (if you have one) to the top of the array but Facebook pulls it the way they want anyways.
+
 = 2.0.10 =
 * Remove deprecated argument from `get_the_excerpt`. Fixes PHP Notice. props -> github.com/jjeaton
 
