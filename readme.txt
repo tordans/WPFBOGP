@@ -50,7 +50,7 @@ Honestly it's not hard to add one once you have the proper meta content in the h
 == Avaliable Plugin Filter ==
 For advanced users only:
 You may want to change those plugin settings with add_filter().
-For WordPress Multisite users: Add a plugin to modify those filters and activate it for you network.
+For WordPress Multisite users: Add a plugin to modify those filters and activate it for you network. See "wp-facebook-ogp-customomization.php.template" for a template of such a plugin.
 
 * ```wpfbogp_app_id``` – Modify fb:admins and fb:app_id
 * ```wpfbogp_url``` – Modify og:url
