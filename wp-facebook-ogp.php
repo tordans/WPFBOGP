@@ -293,10 +293,10 @@ function wpfbogp_init() {
 */
 function wpfbogp_add_page() {
 	$options = wpfbogp_get_option();
-	if( array_key_exists( 'wpfbogp_hide_page', $options ) ) {
-		if( $options['wpfbogp_hide_page'] != true ) {
-			add_options_page('Facebook Open Graph protocol plugin','Facebook OGP','manage_options','wpfbogp','wpfbogp_buildpage');
-		}
+	if( $options && array_key_exists( 'wpfbogp_hide_page', $options ) && $options['wpfbogp_hide_page'] == true ) {
+		return; # Do not add the options_page
+	} else {
+		add_options_page('Facebook Open Graph protocol plugin','Facebook OGP','manage_options','wpfbogp','wpfbogp_buildpage');
 	}
 }
 
