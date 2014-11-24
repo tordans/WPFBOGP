@@ -47,19 +47,6 @@ Honestly it's not hard to add one once you have the proper meta content in the h
 
 1. The Open Graph admin options panel has all options laid out in one easy place. The rest is all behind the scenes.
 
-== Avaliable Plugin Filter ==
-For advanced users only:
-You may want to change those plugin settings with add_filter().
-For WordPress Multisite users: Add a plugin to modify those filters and activate it for you network.
-
-* ```wpfbogp_app_id``` – Modify fb:admins and fb:app_id
-* ```wpfbogp_url``` – Modify og:url
-* ```wpfbogp_title``` – Modify og:title
-* ```wpfbogp_description``` – Modify og:description
-* ```wpfbpogp_type``` – Modify og:type
-* ```wpfbogp_image``` – Modify og:image
-* ```wpfbogp_fallback_img``` – Modify og:image for the fallback image
-
 == Upgrade Notice ==
 = 2.0.11 =
 Fixes an issue some had with thumbnail image paths & fixes php notice some were getting. Cheers.
